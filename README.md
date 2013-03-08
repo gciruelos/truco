@@ -1,0 +1,4 @@
+truco
+=====
+
+Jugar al Truco
