@@ -1,4 +1,4 @@
 truco
 =====
 
-Jugar al Truco
+Script de python que permite jugar al truco por consola.
