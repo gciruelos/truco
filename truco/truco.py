@@ -1,6 +1,6 @@
 ##Truco
 #Por Gonzalo Ciruelos
-#Version 0.1 beta
+#Version 0.0.1beta
 
 from cartaymano import Mano, Carta, cartas_tiradas_MIA, cartas_tiradas_CPU
 
@@ -10,7 +10,8 @@ manos = [2, 2, 2]
 
 Mano_Quien = bool(random.randint(0,1))			#Si va la pc True, si va el jugador False
 
-
+envido_CPU = 0
+envido_JUG = 0
 
 carta_del_otro = []
 #tanto_del_otro = 0
@@ -54,6 +55,7 @@ def jugar(tanto, mano):
 					if Carta(carta2).jerarquizar() == maximo:
 						ManoCPU.tirar_carta(carta2)
 		if posibles == []:
+			carta = Carta(carta)
 			for carta in ManoCPU.decir_cartas():					#Elije la menor de todas las cartas
 				if carta.jerarquizar() < maximo:
 					maximo = carta.jerarquizar()
@@ -63,8 +65,8 @@ def jugar(tanto, mano):
 	else:			#Va la pc
 		envido(mano, tanto)
 		valor_mayor_carta = Carta(ManoCPU.mayor_carta()).jerarquizar()
-		valor_media_carta = Carta(ManoCPU.media_carta()).jerarquizar()
 		valor_menor_carta = Carta(ManoCPU.menor_carta()).jerarquizar()
+		valor_media_carta = Carta(ManoCPU.media_carta()).jerarquizar()		
 		
 		if valor_mayor_carta > 10:													#Si la mayor carta es mas grande que un 3, 
 			if valor_media_carta >= 10:											#y la segunda mayor carta tambien, tira la segunda mayor
@@ -82,14 +84,15 @@ def jugar(tanto, mano):
 		envido(False, tanto)
 		carta_del_oponente()
 	
-	manos[0] = 1
-	
 	if Carta(cartas_tiradas_MIA[0]).jerarquizar() > Carta(cartas_tiradas_CPU[0]).jerarquizar():
 		segunda_mano('jugador')
+		manos[0] = 0
 	elif Carta(cartas_tiradas_MIA[0]).jerarquizar() < Carta(cartas_tiradas_CPU[0]).jerarquizar():
 		segunda_mano('cpu')
+		manos[0] = 1
 	elif Carta(cartas_tiradas_MIA[0]).jerarquizar() == Carta(cartas_tiradas_CPU[0]).jerarquizar():
 		segunda_mano('parda')
+		manos[0] = 2
 
 
 def truco(quienlocanta, pasar = 0):
@@ -99,15 +102,15 @@ def truco(quienlocanta, pasar = 0):
 	if quienlocanta == 'yo':
 		if truco_utilidad() == True:
 			if truco_hecho == 0:
-				print 'Canta truco'
+				print '---> Truco'
 				truco_hecho += 1
 			elif truco_hecho == 1:
-				print 'Canta retruco'
+				print '---> Retruco'
 				truco_hecho += 1
 			elif truco_hecho == 3:
-				print 'Canta vale cuatro'
+				print '---> Vale cuatro'
 				truco_hecho += 1
-			respuesta = raw_input('Quiso, no quiso o retruco? (S/n/R) ')
+			respuesta = raw_input('---> Queres, no queres o retrucas? (S/n/R) ')
 			if respuesta == 'S':
 				pass
 			elif respuesta == 'n':
@@ -119,17 +122,17 @@ def truco(quienlocanta, pasar = 0):
 				
 	elif quienlocanta == 'el':
 		if pasar == 0:
-			if raw_input('Canto truco? (S/n) ') == 'S':
+			if raw_input('Queres cantar truco? (S/n) ') == 'S':
 				if truco_utilidad == True:
-					print 'Quere'
+					print '---> Quiero'
 				else:
-					print 'No quieras'
+					print '---> No quiero'
 					exit()
 		elif pasar == 1:
 			if truco_utilidad() == True:
-				print 'Quere'
+				print '---> Quiero'
 			else:
-				print 'No quieras'
+				print '---> No quiero'
 				exit()
 
 
@@ -141,11 +144,11 @@ def envido(soymano, tanto):
 		
 		if soymano == True:
 			if cantar_envido(tanto, tanto) == True:
-				print '---> Real envido\n---> Queres? (S/n)'
+				env = raw_input('---> Real envido\n---> Queres? (S/n) ')
 				envido_hecho = 1
 			else:
 				if cantar_envido(tanto, 100) == True:
-					print '---> Envido\n---> Queres? (S/n)'
+					env = raw_input('---> Envido\n---> Queres? (S/n) ')
 					envido_hecho = 1
 				#else:
 				#	print 'No cantes nada'
@@ -174,50 +177,38 @@ def segunda_mano(quienva):
 	
 	global manos, mis_cartas_tiradas, cartas
 
-	if quienva == 'el':
+	if quienva == 'jugador':
 		truco('el')
 
-		carta_del_oponente()
-		if cartas[0][2] > carta_del_otro[2]:				#Se fija si alguna carta es mayor que x
-			print 'Tira ', cartas[0]
-			mis_cartas_tiradas[1] = cartas[0]
-			cartas.remove(cartas[0])						
-		elif cartas[1][2] > carta_del_otro[2]:
-			print 'Tira ', cartas[1]
-			mis_cartas_tiradas[1] = cartas[1]
-			cartas.remove(cartas[1])
-		else: print 'Perdiste'		
+		carta_del_jugador = Carta(carta_del_oponente())
+		if Carta(ManoCPU.menor_carta()).jerarquizar() > carta_del_jugador.jerarquizar():				#Se fija si alguna carta es mayor que x
+			ManoCPU.tirar_carta(ManoCPU.menor_carta())					
+		elif Carta(ManoCPU.mayor_carta()).jerarquizar() > carta_del_jugador.jerarquizar():
+			ManoCPU.tirar_carta(ManoCPU.mayor_carta())
+		else: print '---> Ganaste la mano, bien jugado.'		
 		
-	elif quienva == 'yo':
+	elif quienva == 'cpu':
 		truco('yo')
-		if cartas[1][2] >= 10:
-			print 'Tira ', cartas[0]
-			mis_cartas_tiradas[1] = cartas[0]
-			cartas.remove(cartas[0])
+		if Carta(ManoCPU.mayor_carta()).jerarquizar() >= 10:
+			ManoCPU.tirar_carta(ManoCPU.mayor_carta())
 		else:
-			print 'Tira ', cartas[0]
-			mis_cartas_tiradas[1] = cartas[0]
-			cartas.remove(cartas[0])
+			ManoCPU.tirar_carta(ManoCPU.menor_carta())	
 		truco('el')
 		carta_del_oponente()
 	else:
-		print 'Tira ', cartas[1]
-		mis_cartas_tiradas[1] = cartas[1]
-		cartas.remove(cartas[1])
+		ManoCPU.tirar_carta(ManoCPU.mayor_carta())
 		truco('el')
 		carta_del_oponente()
 	
-	manos[1] = 1
-	
-	if mis_cartas_tiradas[1][2] > carta_del_otro[2]:
-		manos[1] = True
-		tercera_mano('yo')
-	elif mis_cartas_tiradas[1][2] < carta_del_otro[2]:
-		manos[1] = False
-		tercera_mano('el')
-	elif mis_cartas_tiradas[1][2] == carta_del_otro[2]:
-		manos[1] = None
-		tercera_mano('parda')
+	if Carta(cartas_tiradas_MIA[0]).jerarquizar() > Carta(cartas_tiradas_CPU[0]).jerarquizar():
+		segunda_mano('jugador')
+		manos[1] = 0
+	elif Carta(cartas_tiradas_MIA[0]).jerarquizar() < Carta(cartas_tiradas_CPU[0]).jerarquizar():
+		segunda_mano('cpu')
+		manos[1] = 1
+	elif Carta(cartas_tiradas_MIA[0]).jerarquizar() == Carta(cartas_tiradas_CPU[0]).jerarquizar():
+		segunda_mano('parda')
+		manos[1] = 2
 		
 
 def tercera_mano(quienva):
@@ -226,7 +217,7 @@ def tercera_mano(quienva):
 		truco('el')
 		carta_del_oponente()
 					
-		if cartas[0][2] > carta_del_otro[2]:
+		if  > carta_del_otro[2]:
 			print 'Tira ', cartas[0]
 			mis_cartas_tiradas[1] = cartas[0]
 			cartas.remove(cartas[0])				
@@ -342,12 +333,13 @@ def ingresar_mano():
 	ManoCPU = Mano(cartacpu1, cartacpu2, cartacpu3)
 	
 	#Me fijo cuanto tiene la pc de envido
-	envido = ManoCPU.tengo_envido()
+	envido_CPU = ManoCPU.tengo_envido()
+	envido_JUG = ManoMIA.tengo_envido()
 
 	print ManoMIA
 	
 	global Mano_Quien
-	jugar(envido, Mano_Quien)
+	jugar(envido_CPU, Mano_Quien)
 	
 	#Cambia quien es mano
 	Mano_Quien = not Mano_Quien

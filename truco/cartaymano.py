@@ -50,7 +50,7 @@ class Carta:
 			ingresar_mano()
 
 	def __str__(self):
-		return str(self.numero), 'de', (self.palo+'.')
+		return str(self.numero)+' de '+str(self.palo)+'.'
 
 
 class Mano:
@@ -98,20 +98,23 @@ class Mano:
 		maximo=0
 		mayorcarta=[]
 		for carta in self.cartas:
-			Carta(carta).jerarquizar()<maximo
-			mayorcarta=carta
+			if Carta(carta).jerarquizar()>maximo:
+				maximo = Carta(carta).jerarquizar()
+				mayorcarta = carta
 		return mayorcarta
 	def media_carta(self):
-		cartas = Mano(self.decir_cartas())
-		cartas.cartas.remove(cartas.mayor_carta())
-		cartas.cartas.remove(cartas.menor_carta())
-		return cartas.decir_cartas()		
+		media_carta = self.decir_cartas()
+		media_carta.remove(self.mayor_carta())
+		media_carta.remove(self.menor_carta())
+		media_carta = media_carta[0]
+		return media_carta		
 	def menor_carta(self):
 		minimo=15
 		menorcarta=[]
 		for carta in self.cartas:
-			Carta(carta).jerarquizar()<minimo
-			menorcarta=carta
+			if Carta(carta).jerarquizar()<minimo:
+				minimo = Carta(carta).jerarquizar()
+				menorcarta=carta
 		return menorcarta
 	def __str__(self):
 		cartas_que_tengo = []
