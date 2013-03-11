@@ -42,15 +42,15 @@ def primera_mano(tanto, mano):
 
 
 	if mano==False:			#Va el jugador
-		envido(False, tanto) 
+		envido(False, tanto, mano) 
 		cartita = Carta(carta_del_oponente())
-		envido(True, tanto)
+		envido(True, tanto, mano)
 		quejugar(mano, cartita)
 
 	else:					#Va la pc
-		envido(True, tanto)
+		envido(True, tanto, mano)
 		quejugar(mano)
-		envido(False, tanto)
+		envido(False, tanto, mano)
 		carta_del_oponente()
 
 	if Carta(cartas_tiradas_MIA[0]).jerarquizar() > Carta(cartas_tiradas_CPU[0]).jerarquizar():
@@ -166,33 +166,40 @@ def truco(quienlocanta, pasar = 0):
 	if vaqueriendo == False:
 		exit()
 
-
-def envido(soymano, tanto):
+def envido(soymano, tanto, mano):
 	
-	global envido_hecho
+	global envido_hecho, envido_CPU, envido_JUG
 	
 	if envido_hecho == 0:
 		
 		if soymano == True:
 			if cantar_envido(tanto, tanto) == True:
 				env = raw_input('---> Real envido\n---> Queres? (S/n) ')
+				if env == 'S':
+					hablar_envido(mano)
 				envido_hecho = 1
 			else:
 				if cantar_envido(tanto, 100) == True:
 					env = raw_input('---> Envido\n---> Queres? (S/n) ')
+					if env == 'S':
+						hablar_envido(mano)
 					envido_hecho = 1
 				#else:
 				#	print 'No cantes nada'
 		else:
 			canto_envido = raw_input('Queres cantar envido? (S/n) ')
 			
-			if canto_envido == 'S' or canto_envido == 's':
+			if canto_envido == 'S':
 				if cantar_envido(tanto, tanto) == True:
-					print '---> Envido'
+					env = raw_input('---> Envido\n---> Queres? (S/n) ')
+					if env == 'S':
+						hablar_envido(mano)
 					envido_hecho = 1
+						
 				else:
 					if cantar_envido(tanto, 100) == True:
 						print '---> Quiero'
+						hablar_envido(mano)
 						envido_hecho = 1
 					else:
 						print '---> No quiero'
@@ -230,6 +237,13 @@ def quejugar(mano, carta_del_jugador = None):
 	posibles = []
 	if carta_del_jugador != None:
 		valor_carta_jugador = carta_del_jugador.jerarquizar()
+	try:
+		valor_mayor_carta = Carta(ManoCPU.mayor_carta()).jerarquizar()
+		valor_menor_carta = Carta(ManoCPU.menor_carta()).jerarquizar()
+		valor_media_carta = Carta(ManoCPU.media_carta()).jerarquizar()	
+	except IndexError:
+		valor_mayor_carta = Carta(ManoCPU.mayor_carta()).jerarquizar()
+		valor_menor_carta = Carta(ManoCPU.menor_carta()).jerarquizar()
 	
 	if manos[0] == None:
 		if mano == False:
@@ -247,9 +261,7 @@ def quejugar(mano, carta_del_jugador = None):
 					if Carta(carta2).jerarquizar() == maximo:
 						ManoCPU.tirar_carta(carta2)
 		elif mano == True:
-			valor_mayor_carta = Carta(ManoCPU.mayor_carta()).jerarquizar()
-			valor_menor_carta = Carta(ManoCPU.menor_carta()).jerarquizar()
-			valor_media_carta = Carta(ManoCPU.media_carta()).jerarquizar()		
+	
 			
 			if valor_mayor_carta > 10:									#Si la mayor carta es mas grande que un 3, 
 				if valor_media_carta >= 10:								#y la segunda mayor carta tambien, tira la segunda mayor
@@ -284,8 +296,8 @@ def quejugar(mano, carta_del_jugador = None):
 			ManoCPU.tirar_carta(ManoCPU.mayor_carta())
 	elif manos[2] == None:
 		if mano == False:
-			valor_carta_jugador = carta_del_jugador.jerarquizar()
-						
+			#valor_carta_jugador = carta_del_jugador.jerarquizar()
+			
 			if valor_menor_carta > valor_carta_jugador:
 				ManoCPU.tirar_carta(ManoCPU.menor_carta())				
 			else: 
@@ -346,12 +358,25 @@ def cantar_envido(tanto, modificador):
 	return cantar
 
 
+def hablar_envido(mano):
+	if mano == True:
+		if envido_CPU >= envido_JUG:
+			print '---> Tengo '+str(envido_CPU)+' y vos decis \"son buenas\". Gane.'
+		else:
+			print '---> Tengo '+str(envido_CPU)+' y vos '+str(envido_JUG)+'. Perdi.'
+	elif mano == False:
+		if envido_CPU >= envido_JUG:
+			print '---> Tenes '+str(envido_JUG)+' y las mias son mejores: '+str(envido_CPU)+'. Gane.'
+		else:
+			print '---> Tenes '+str(envido_JUG)+' y digo \"son buenas\". Perdi.'
+
+
 #################------INGRESAR MANO
 
 
 def ingresar_mano():
 
-	global ManoMIA, ManoCPU
+	global ManoMIA, ManoCPU, envido_CPU, envido_JUG
 	
 	#Mezclo el mazo
 	mazo_mezclado = Mazo
