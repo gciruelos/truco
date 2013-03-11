@@ -15,35 +15,36 @@ class Carta:
 	def decir(self):
 		return [self.numero, self.palo]
 	def jerarquizar(self):
-		if int(self.numero) == 1:
+		num = int(self.numero)
+		if num == 1:
 			if self.palo == 'Oro' or self.palo == 'Copa':
 				return 8
 			elif self.palo == 'Basto':
 				return 13
 			elif self.palo == 'Espada':
 				return 14
-		elif int(self.numero) == 2:
+		elif num == 2:
 			return 9
-		elif int(self.numero) == 3:
+		elif num == 3:
 			return 10
-		elif int(self.numero) == 4:
+		elif num == 4:
 			return 1
-		elif int(self.numero) == 5:
+		elif num == 5:
 			return 2
-		elif int(self.numero) == 6:
+		elif num == 6:
 			return 3
-		elif int(self.numero) == 7:
+		elif num == 7:
 			if self.palo == 'Basto' or self.palo == 'Copa':
 				return 4
 			elif self.palo == 'Oro':
 				return 11
 			elif self.palo == 'Espada':
 				return 12
-		elif int(self.numero) == 10:
+		elif num == 10:
 			return 5
-		elif int(self.numero) == 11:
+		elif num == 11:
 			return 6
-		elif int(self.numero) == 12:
+		elif num == 12:
 			return 7
 		else:
 			print 'Hubo un error al ingresar las cartas, por favor hacelo de nuevo\n'

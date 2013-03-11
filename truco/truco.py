@@ -8,6 +8,8 @@ import random
 
 manos = [None, None, None]
 
+tiene_el_quiero = None			#True lo tiene la pc, False el jugador
+
 ManoCPU = Mano()
 ManoMIA = Mano()
 
@@ -124,11 +126,11 @@ def tercera_mano(quienva):
 
 def truco(quienlocanta, pasar = 0):
 	
-	global truco_hecho
+	global truco_hecho, tiene_el_quiero
 	
 	vaqueriendo = True
 	
-	if quienlocanta == 'el':
+	if quienlocanta == 'el' and tiene_el_quiero is not True:
 		if truco_hecho == 0:
 			cantar = raw_input('Queres cantar truco? (S/n) ' )
 		elif truco_hecho == 1:
@@ -142,29 +144,35 @@ def truco(quienlocanta, pasar = 0):
 			if truco_utilidad()==True:
 				print '---> Quiero'
 				truco_hecho += 1
+				tiene_el_quiero = False
 			else:
 				print '---> No quiero'
 				vaqueriendo = False
 		else:
 			pass
 	else:
-		if truco_utilidad()==True:
-			if truco_hecho == 0:
-				cantar = raw_input('---> Truco\n---> Queres? (S/n) ')
-			elif truco_hecho == 1:
-				cantar = raw_input('---> Re truco\n---> Queres? (S/n) ')
-			elif truco_hecho == 2:
-				cantar = raw_input('---> Vale cuatro\n---> Queres? (S/n) ')
+		if tiene_el_quiero is not False:
+			if truco_utilidad()==True:
+				if truco_hecho == 0:
+					cantar = raw_input('---> Truco\n---> Queres? (S/n) ')
+				elif truco_hecho == 1:
+					cantar = raw_input('---> Re truco\n---> Queres? (S/n) ')
+				elif truco_hecho == 2:
+					cantar = raw_input('---> Vale cuatro\n---> Queres? (S/n) ')
+				else:
+					pass
+				if cantar == 'S':
+					truco_hecho += 1
+					tiene_el_quiero = True
+				else:
+					vaqueriendo = False
 			else:
 				pass
-			if cantar == 'S':
-				truco_hecho += 1
-			else:
-				vaqueriendo = False
 		else:
 			pass			
 	if vaqueriendo == False:
 		exit()
+
 
 def envido(soymano, tanto, mano):
 	
@@ -190,19 +198,19 @@ def envido(soymano, tanto, mano):
 			canto_envido = raw_input('Queres cantar envido? (S/n) ')
 			
 			if canto_envido == 'S':
+				envido_hecho = 1
 				if cantar_envido(tanto, tanto) == True:
 					env = raw_input('---> Envido\n---> Queres? (S/n) ')
 					if env == 'S':
 						hablar_envido(mano)
-					envido_hecho = 1
 						
 				else:
 					if cantar_envido(tanto, 100) == True:
 						print '---> Quiero'
 						hablar_envido(mano)
-						envido_hecho = 1
 					else:
 						print '---> No quiero'
+						
 			else:
 				pass
 
@@ -325,16 +333,30 @@ def truco_utilidad():
 	
 	global manos
 	
+	if len(ManoCPU.decir_cartas())<len(ManoMIA.decir_cartas()):
+		una_carta_mas = True
+	else:
+		una_carta_mas = False
+	
+	if una_carta_mas == False:
+		valor_laotracarta = Carta(ManoCPU.decir_cartas()[1]).jerarquizar()
+	else:
+		valor_laotracarta = Carta(cartas_tiradas_CPU[1]).jerarquizar()
+	
 	if manos[1] == None:
-		if manos[0] == True and (Carta(ManoCPU.mayor_carta()).jerarquizar() >= 9):
+		if manos[0] == True and ((Carta(ManoCPU.decir_cartas()[0]).jerarquizar() or valor_laotracarta) >= 9):
 			return True
 		elif manos[0] == False:
-			if (Carta(ManoCPU.decir_cartas()[0]).jerarquizar()+Carta(ManoCPU.decir_cartas()[1]).jerarquizar()) >= 18:
+			if (Carta(ManoCPU.decir_cartas()[0]).jerarquizar()+valor_laotracarta) >= 18:
 				return True
 			else:
 				return False
 		else:
-			return False
+			if Carta(ManoCPU.mayor_carta()).jerarquizar() >= 9:
+				return True
+			else:
+				return False
+				
 
 	elif manos[2] == None:
 		if (Carta(ManoCPU.mayor_carta()).jerarquizar() >= 9):
