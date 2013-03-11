@@ -98,18 +98,24 @@ class Mano:
 			print 'Las cartas que te quedan son', self
 			cartas_tiradas_MIA.append(carta)
 	def mayor_carta(self):
-		maximo=0
-		mayorcarta=[]
-		for carta in self.cartas:
-			if Carta(carta).jerarquizar()>maximo:
-				maximo = Carta(carta).jerarquizar()
-				mayorcarta = carta
+		if len(self.cartas) != 1:
+			maximo=0
+			mayorcarta=[]
+			for carta in self.cartas:
+				if Carta(carta).jerarquizar()>maximo:
+					maximo = Carta(carta).jerarquizar()
+					mayorcarta = carta
+		else:
+			mayorcarta = self.cartas[0]
 		return mayorcarta
 	def media_carta(self):
-		media_carta = self.decir_cartas()
-		media_carta.remove(self.mayor_carta())
-		media_carta.remove(self.menor_carta())
-		media_carta = media_carta[0]
+		try:
+			media_carta = self.decir_cartas()
+			media_carta.remove(self.mayor_carta())
+			media_carta.remove(self.menor_carta())
+			media_carta = media_carta[0]
+		except ValueError:
+			media_carta = None
 		return media_carta		
 	def menor_carta(self):
 		minimo=15

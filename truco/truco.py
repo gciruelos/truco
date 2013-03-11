@@ -157,7 +157,7 @@ def truco(quienlocanta, pasar = 0):
 				cantar = raw_input('---> Vale cuatro\n---> Queres? (S/n) ')
 			else:
 				pass
-			if cantar == True:
+			if cantar == 'S':
 				truco_hecho += 1
 			else:
 				vaqueriendo = False
@@ -238,12 +238,15 @@ def quejugar(mano, carta_del_jugador = None):
 	if carta_del_jugador != None:
 		valor_carta_jugador = carta_del_jugador.jerarquizar()
 	try:
-		valor_mayor_carta = Carta(ManoCPU.mayor_carta()).jerarquizar()
-		valor_menor_carta = Carta(ManoCPU.menor_carta()).jerarquizar()
-		valor_media_carta = Carta(ManoCPU.media_carta()).jerarquizar()	
-	except IndexError:
-		valor_mayor_carta = Carta(ManoCPU.mayor_carta()).jerarquizar()
-		valor_menor_carta = Carta(ManoCPU.menor_carta()).jerarquizar()
+		valor_mayor_carta = Carta(ManoCPU.mayor_carta()).jerarquizar()			#A medida que va avanzando el juego
+		valor_menor_carta = Carta(ManoCPU.menor_carta()).jerarquizar()			#no puede calcular el valor de ciertas
+		valor_media_carta = Carta(ManoCPU.media_carta()).jerarquizar()			#cartas porque no existen, entonces	
+	except IndexError:															#hago excepciones
+		try:
+			valor_mayor_carta = Carta(ManoCPU.mayor_carta()).jerarquizar()
+			valor_menor_carta = Carta(ManoCPU.menor_carta()).jerarquizar()
+		except TypeError:
+			valor_mayor_carta = Carta(ManoCPU.mayor_carta()).jerarquizar()
 	
 	if manos[0] == None:
 		if mano == False:
@@ -296,10 +299,8 @@ def quejugar(mano, carta_del_jugador = None):
 			ManoCPU.tirar_carta(ManoCPU.mayor_carta())
 	elif manos[2] == None:
 		if mano == False:
-			#valor_carta_jugador = carta_del_jugador.jerarquizar()
-			
-			if valor_menor_carta > valor_carta_jugador:
-				ManoCPU.tirar_carta(ManoCPU.menor_carta())				
+			if valor_mayor_carta > valor_carta_jugador:
+				ManoCPU.tirar_carta(ManoCPU.mayor_carta())				
 			else: 
 				print 'Perdiste'
 				exit()	
@@ -336,7 +337,7 @@ def truco_utilidad():
 			return False
 
 	elif manos[2] == None:
-		if (Carta(ManoCPU.menor_carta()).jerarquizar() >= 9):
+		if (Carta(ManoCPU.mayor_carta()).jerarquizar() >= 9):
 			return True
 		else:
 			return False
