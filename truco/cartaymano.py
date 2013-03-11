@@ -48,7 +48,11 @@ class Carta:
 		else:
 			print 'Hubo un error al ingresar las cartas, por favor hacelo de nuevo\n'
 			ingresar_mano()
-
+	def __getitem__(self, indice):
+		if indice == 0:
+			return self.numero
+		elif indice == 1:
+			return self.palo
 	def __str__(self):
 		return str(self.numero)+' de '+str(self.palo)+'.'
 
@@ -84,7 +88,6 @@ class Mano:
 		if len(self.cartas)==3:
 			return [Carta(self.cartas[0]).decir(), Carta(self.cartas[1]).decir(), Carta(self.cartas[2]).decir()]
 	def tirar_carta(self, carta, quien='CPU'):
-		global cartas_tiradas_CPU, cartas_tiradas_MIA
 		global cartas_tiradas_CPU, cartas_tiradas_MIA
 		if quien=='CPU':
 			self.cartas.remove(carta)
