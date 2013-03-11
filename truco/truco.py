@@ -38,7 +38,7 @@ for palo in Palos:
 
 def primera_mano(tanto, mano):
 
-	global manos, mis_cartas_tiradas, cartas
+	global manos, mis_cartas_tiradas, cartas, cartas_tiradas_CPU, cartas_tiradas_MIA
 
 
 	if mano==False:			#Va el jugador
@@ -66,7 +66,7 @@ def primera_mano(tanto, mano):
 		
 def segunda_mano(quienva):
 	
-	global manos, mis_cartas_tiradas, cartas
+	global manos, mis_cartas_tiradas, cartas, cartas_tiradas_CPU, cartas_tiradas_MIA
 
 	if quienva == 'jugador':
 		truco('el')
@@ -98,11 +98,10 @@ def segunda_mano(quienva):
 		manos[1] = 2
 		tercera_mano('parda')
 		
-		
 
 def tercera_mano(quienva):
 	
-	valor_menor_carta = Carta(ManoCPU.menor_carta()).jerarquizar()
+	global manos, mis_cartas_tiradas, cartas, cartas_tiradas_CPU, cartas_tiradas_MIA
 	
 	if quienva == 'jugador':
 		truco('el')
@@ -130,7 +129,15 @@ def truco(quienlocanta, pasar = 0):
 	vaqueriendo = True
 	
 	if quienlocanta == 'el':
-		cantar = raw_input('Queres cantar truco? (S/n) ' )
+		if truco_hecho == 0:
+			cantar = raw_input('Queres cantar truco? (S/n) ' )
+		elif truco_hecho == 1:
+			cantar = raw_input('Queres cantar retruco? (S/n) ' )
+		elif truco_hecho == 2:
+			cantar = raw_input('Queres cantar vale cuatro? (S/n) ' )
+		else:
+			pass
+		
 		if cantar == 'S':
 			if truco_utilidad()==True:
 				print '---> Quiero'
@@ -142,13 +149,22 @@ def truco(quienlocanta, pasar = 0):
 			pass
 	else:
 		if truco_utilidad()==True:
-			cantar = raw_input('---> Truco\n---> Queres? (S/n) ')
+			if truco_hecho == 0:
+				cantar = raw_input('---> Truco\n---> Queres? (S/n) ')
+			elif truco_hecho == 1:
+				cantar = raw_input('---> Re truco\n---> Queres? (S/n) ')
+			elif truco_hecho == 2:
+				cantar = raw_input('---> Vale cuatro\n---> Queres? (S/n) ')
+			else:
+				pass
 			if cantar == True:
 				truco_hecho += 1
 			else:
-				vaqueriendo = False			
-	#if vaqueriendo == False:
-	#	exit()
+				vaqueriendo = False
+		else:
+			pass			
+	if vaqueriendo == False:
+		exit()
 
 
 def envido(soymano, tanto):
@@ -209,8 +225,8 @@ def quejugar(mano, carta_del_jugador = None):
 	global manos
 	global ManoCPU, ManoMIA
 	
-	maximo = 0
-	minimo = 15
+	maximo = 15
+	minimo = 0
 	posibles = []
 	if carta_del_jugador != None:
 		valor_carta_jugador = carta_del_jugador.jerarquizar()
@@ -218,16 +234,16 @@ def quejugar(mano, carta_del_jugador = None):
 	if manos[0] == None:
 		if mano == False:
 			for carta in ManoCPU.decir_cartas():
-				carta = Carta(carta)							#Se fija si alguna carta esta entre x y x+3
+				carta = Carta(carta)									#Se fija si alguna carta esta entre x y x+3
 				if carta.jerarquizar() > valor_carta_jugador and carta.jerarquizar() < (valor_carta_jugador+3):
 					posibles.append(carta)
 			if posibles == []:
-				ManoCPU.tirar_carta(ManoCPU.menor_carta())		#Elige la menor de las cartas
+				ManoCPU.tirar_carta(ManoCPU.menor_carta())				#Si no hay ninguna que cumpla esa condicion, tira la menor
 			else:
-				for carta in posibles:					#Elije la menor de esas cartas
+				for carta in posibles:									#Si hay, elije la menor
 					if Carta(carta).jerarquizar() < maximo:
 						maximo = Carta(carta).jerarquizar()
-				for carta2 in ManoCPU.decir_cartas():					#Busca esa carta en la lista 'cartas', la imprime y la borra
+				for carta2 in ManoCPU.decir_cartas():					#Busca esa carta y la tira
 					if Carta(carta2).jerarquizar() == maximo:
 						ManoCPU.tirar_carta(carta2)
 		elif mano == True:
@@ -235,24 +251,24 @@ def quejugar(mano, carta_del_jugador = None):
 			valor_menor_carta = Carta(ManoCPU.menor_carta()).jerarquizar()
 			valor_media_carta = Carta(ManoCPU.media_carta()).jerarquizar()		
 			
-			if valor_mayor_carta > 10:													#Si la mayor carta es mas grande que un 3, 
-				if valor_media_carta >= 10:											#y la segunda mayor carta tambien, tira la segunda mayor
+			if valor_mayor_carta > 10:									#Si la mayor carta es mas grande que un 3, 
+				if valor_media_carta >= 10:								#y la segunda mayor carta tambien, tira la segunda mayor
 					ManoCPU.tirar_carta(ManoCPU.media_carta())
-				else:															#si no, tira la mas baja
+				else:													#si no, tira la mas baja
 					ManoCPU.tirar_carta(ManoCPU.menor_carta())
-			elif valor_mayor_carta == 10:												#Si la carta mas alta es un 3
-				if valor_menor_carta+valor_media_carta >= (valor_mayor_carta-2):					#y si las otras dos son masomenos buenas, tira el 3
+			elif valor_mayor_carta == 10:								#Si la carta mas alta es un 3
+				if valor_menor_carta+valor_media_carta >= (valor_mayor_carta-2):	#y si las otras dos son masomenos buenas, tira el 3
 					ManoCPU.tirar_carta(ManoCPU.mayor_carta())
-				elif valor_menor_carta+valor_media_carta < (valor_mayor_carta-2):				#si no tira la mas baja !!!CAMBIAR POR UN ELSE
+				elif valor_menor_carta+valor_media_carta < (valor_mayor_carta-2):	#si no, tira la mas baja
 					ManoCPU.tirar_carta(ManoCPU.menor_carta())
-			elif valor_mayor_carta < 10:													#Si todas son mas chicas que 3 tira una al azar
-				#r=random.randint(1,3)
+			elif valor_mayor_carta < 10:								#Si todas son mas chicas que 3 tira la mas chica
+				#r=random.randint(1,3)									#en un futuro, una al azar
 				ManoCPU.tirar_carta(ManoCPU.menor_carta())
 		else:
 			pass
 	elif manos[1] == None:
 		if mano == False:
-			if Carta(ManoCPU.menor_carta()).jerarquizar() > carta_del_jugador.jerarquizar():				#Se fija si alguna carta es mayor que x
+			if Carta(ManoCPU.menor_carta()).jerarquizar() > carta_del_jugador.jerarquizar():		#Se fija si alguna carta es mayor que x
 				ManoCPU.tirar_carta(ManoCPU.menor_carta())					
 			elif Carta(ManoCPU.mayor_carta()).jerarquizar() > carta_del_jugador.jerarquizar():
 				ManoCPU.tirar_carta(ManoCPU.mayor_carta())
@@ -330,7 +346,7 @@ def cantar_envido(tanto, modificador):
 	return cantar
 
 
-#################------INGRSAR MANO
+#################------INGRESAR MANO
 
 
 def ingresar_mano():
