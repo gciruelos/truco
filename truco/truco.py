@@ -6,6 +6,9 @@ from cartaymano import Mano, Carta, cartas_tiradas_MIA, cartas_tiradas_CPU
 
 import random
 
+#import re
+#SI = '[sS][iI]?'
+
 manos = [None, None, None]
 
 tiene_el_quiero = None			#True lo tiene la pc, False el jugador
@@ -43,13 +46,13 @@ def primera_mano(tanto, mano):
 	global manos, mis_cartas_tiradas, cartas, cartas_tiradas_CPU, cartas_tiradas_MIA
 
 
-	if mano==False:			#Va el jugador
+	if mano == False:			#Va el jugador
 		envido(False, tanto, mano) 
 		cartita = Carta(carta_del_oponente())
 		envido(True, tanto, mano)
 		quejugar(mano, cartita)
 
-	else:					#Va la pc
+	else:						#Va la pc
 		envido(True, tanto, mano)
 		quejugar(mano)
 		envido(False, tanto, mano)
@@ -130,15 +133,19 @@ def truco(quienlocanta, pasar = 0):
 	
 	vaqueriendo = True
 	
+	
 	if quienlocanta == 'el' and tiene_el_quiero is not True:
-		if truco_hecho == 0:
-			cantar = raw_input('Queres cantar truco? (S/n) ' )
-		elif truco_hecho == 1:
-			cantar = raw_input('Queres cantar retruco? (S/n) ' )
-		elif truco_hecho == 2:
-			cantar = raw_input('Queres cantar vale cuatro? (S/n) ' )
+		if pasar == 0:
+			if truco_hecho == 0:
+				cantar = raw_input('Queres cantar truco? (S/n) ' )
+			elif truco_hecho == 1:
+				cantar = raw_input('Queres cantar retruco? (S/n) ' )
+			elif truco_hecho == 2:
+				cantar = raw_input('Queres cantar vale cuatro? (S/n) ' )
+			else:
+				pass
 		else:
-			pass
+			cantar = 'S'
 		
 		if cantar == 'S':
 			if truco_utilidad()==True:
@@ -150,26 +157,29 @@ def truco(quienlocanta, pasar = 0):
 				vaqueriendo = False
 		else:
 			pass
-	else:
-		if tiene_el_quiero is not False:
-			if truco_utilidad()==True:
-				if truco_hecho == 0:
-					cantar = raw_input('---> Truco\n---> Queres? (S/n) ')
-				elif truco_hecho == 1:
-					cantar = raw_input('---> Re truco\n---> Queres? (S/n) ')
-				elif truco_hecho == 2:
-					cantar = raw_input('---> Vale cuatro\n---> Queres? (S/n) ')
-				else:
-					pass
-				if cantar == 'S':
-					truco_hecho += 1
-					tiene_el_quiero = True
-				else:
-					vaqueriendo = False
+	elif quienlocanta == 'cpu' and tiene_el_quiero is not False:
+		if truco_utilidad()==True:
+			if truco_hecho == 0:
+				cantar = raw_input('---> Truco\n---> Queres? (S/n/R) ')
+			elif truco_hecho == 1:
+				cantar = raw_input('---> Re truco\n---> Queres? (S/n/R) ')
+			elif truco_hecho == 2:
+				cantar = raw_input('---> Vale cuatro\n---> Queres? (S/n/R) ')
 			else:
 				pass
+			if cantar == 'S':
+				truco_hecho += 1
+				tiene_el_quiero = True
+			elif cantar == 'R':
+				truco_hecho += 1
+				truco('el',1)
+			else:
+				vaqueriendo = False
 		else:
-			pass			
+			pass
+	else:
+		pass
+			
 	if vaqueriendo == False:
 		exit()
 
@@ -222,18 +232,37 @@ def envido(soymano, tanto, mano):
 
 
 def carta_del_oponente():
-	cartadeljugador = raw_input('Que carta queres tirar? ')
-	lacarta = cartadeljugador.split(' de ')
-	lacarta[0] = int(lacarta[0])
-	global ManoMIA
-	if lacarta in ManoMIA.decir_cartas():
-		ManoMIA.tirar_carta(lacarta, 'jugador')
-	else:
-		print 'Ingresa una carta que tengas'
-	return lacarta
-
+	while True:
+		cartadeljugador = raw_input('Que carta queres tirar? ')
+		lacarta = cartadeljugador.split(' de ')
+		lacarta[0] = int(lacarta[0])
+		global ManoMIA
+		if lacarta in ManoMIA.decir_cartas():
+			ManoMIA.tirar_carta(lacarta, 'jugador')
+		else:
+			print 'Ingresa una carta que tengas'
+			continue
+		return lacarta
+		break
 
 #################------UTILIDADES
+
+
+def una_carta_mas():
+	global ManoMIA, ManoCPU
+	
+	try:
+		if len(ManoCPU.decir_cartas())<len(ManoMIA.decir_cartas()):			#EL JUGADOR tiene una carta mas
+			return True
+		elif len(ManoCPU.decir_cartas())>len(ManoMIA.decir_cartas()):
+			return False
+		else:
+			return None
+	except TypeError:
+		if ManoCPU.decir_cartas() == []:
+			return True
+		else:
+			return False
 
 
 def quejugar(mano, carta_del_jugador = None):
@@ -245,18 +274,9 @@ def quejugar(mano, carta_del_jugador = None):
 	posibles = []
 	if carta_del_jugador != None:
 		valor_carta_jugador = carta_del_jugador.jerarquizar()
-	try:
-		valor_mayor_carta = Carta(ManoCPU.mayor_carta()).jerarquizar()			#A medida que va avanzando el juego
-		valor_menor_carta = Carta(ManoCPU.menor_carta()).jerarquizar()			#no puede calcular el valor de ciertas
-		valor_media_carta = Carta(ManoCPU.media_carta()).jerarquizar()			#cartas porque no existen, entonces	
-	except IndexError:															#hago excepciones
-		try:
-			valor_mayor_carta = Carta(ManoCPU.mayor_carta()).jerarquizar()
-			valor_menor_carta = Carta(ManoCPU.menor_carta()).jerarquizar()
-		except TypeError:
-			valor_mayor_carta = Carta(ManoCPU.mayor_carta()).jerarquizar()
+
 	
-	if manos[0] == None:
+	if manos[0] == None:	
 		if mano == False:
 			for carta in ManoCPU.decir_cartas():
 				carta = Carta(carta)									#Se fija si alguna carta esta entre x y x+3
@@ -272,8 +292,9 @@ def quejugar(mano, carta_del_jugador = None):
 					if Carta(carta2).jerarquizar() == maximo:
 						ManoCPU.tirar_carta(carta2)
 		elif mano == True:
-	
-			
+			valor_mayor_carta = Carta(ManoCPU.mayor_carta()).jerarquizar()
+			valor_menor_carta = Carta(ManoCPU.menor_carta()).jerarquizar()
+			valor_media_carta = Carta(ManoCPU.media_carta()).jerarquizar()		
 			if valor_mayor_carta > 10:									#Si la mayor carta es mas grande que un 3, 
 				if valor_media_carta >= 10:								#y la segunda mayor carta tambien, tira la segunda mayor
 					ManoCPU.tirar_carta(ManoCPU.media_carta())
@@ -289,7 +310,8 @@ def quejugar(mano, carta_del_jugador = None):
 				ManoCPU.tirar_carta(ManoCPU.menor_carta())
 		else:
 			pass
-	elif manos[1] == None:
+
+	elif manos[1] == None:	
 		if mano == False:
 			if Carta(ManoCPU.menor_carta()).jerarquizar() > carta_del_jugador.jerarquizar():		#Se fija si alguna carta es mayor que x
 				ManoCPU.tirar_carta(ManoCPU.menor_carta())					
@@ -298,21 +320,23 @@ def quejugar(mano, carta_del_jugador = None):
 			else: 
 				print '---> Ganaste la mano, bien jugado.'
 				exit()
-		if mano == True:
+		elif mano == True:
 			if Carta(ManoCPU.mayor_carta()).jerarquizar() >= 10:
 				ManoCPU.tirar_carta(ManoCPU.mayor_carta())
 			else:
 				ManoCPU.tirar_carta(ManoCPU.menor_carta())	
 		else:
 			ManoCPU.tirar_carta(ManoCPU.mayor_carta())
+	
 	elif manos[2] == None:
 		if mano == False:
+			valor_mayor_carta = Carta(ManoCPU.mayor_carta()).jerarquizar()
 			if valor_mayor_carta > valor_carta_jugador:
 				ManoCPU.tirar_carta(ManoCPU.mayor_carta())				
 			else: 
-				print 'Perdiste'
+				print '---> Me voy al mazo.'
 				exit()	
-		if mano == True:
+		elif mano == True:
 			ManoCPU.tirar_carta(ManoCPU.mayor_carta())
 		else:
 			ManoCPU.tirar_carta(ManoCPU.mayor_carta())
@@ -333,36 +357,45 @@ def truco_utilidad():
 	
 	global manos
 	
-	if len(ManoCPU.decir_cartas())<len(ManoMIA.decir_cartas()):
-		una_carta_mas = True
-	else:
-		una_carta_mas = False
-	
-	if una_carta_mas == False:
-		valor_laotracarta = Carta(ManoCPU.decir_cartas()[1]).jerarquizar()
-	else:
-		valor_laotracarta = Carta(cartas_tiradas_CPU[1]).jerarquizar()
-	
 	if manos[1] == None:
-		if manos[0] == True and ((Carta(ManoCPU.decir_cartas()[0]).jerarquizar() or valor_laotracarta) >= 9):
-			return True
-		elif manos[0] == False:
-			if (Carta(ManoCPU.decir_cartas()[0]).jerarquizar()+valor_laotracarta) >= 18:
+		if una_carta_mas() == True:
+			if manos[0] == True and ((Carta(cartas_tiradas_CPU[1]).jerarquizar() or (Carta(ManoCPU.decir_cartas()[0]).jerarquizar())) >= 9):
 				return True
+			elif manos[0] == False:
+				if (cartas_tiradas_CPU[1].jerarquizar() + Carta(ManoCPU.decir_cartas()[0]).jerarquizar()) >= 18:
+					return True
+				else:
+					return False
 			else:
-				return False
-		else:
-			if Carta(ManoCPU.mayor_carta()).jerarquizar() >= 9:
+				if Carta(cartas_tiradas_CPU[1]).jerarquizar() >= 9:
+					return True
+				else:
+					return False
+		elif una_carta_mas() == None or False:
+			if manos[0] == True and ((Carta(ManoCPU.decir_cartas()[0]).jerarquizar() or (Carta(ManoCPU.decir_cartas()[1]).jerarquizar())) >= 9):
 				return True
+			elif manos[0] == False:
+				if (Carta(ManoCPU.decir_cartas()[0]).jerarquizar() + Carta(ManoCPU.decir_cartas()[0]).jerarquizar()) >= 18:
+					return True
+				else:
+					return False
 			else:
-				return False
-				
+				if Carta(ManoCPU.mayor_carta()).jerarquizar() >= 9:
+					return True
+				else:
+					return False
 
 	elif manos[2] == None:
-		if (Carta(ManoCPU.mayor_carta()).jerarquizar() >= 9):
-			return True
-		else:
-			return False
+		if una_carta_mas() == True:
+			if Carta(cartas_tiradas_CPU[2]).jerarquizar() >= 9:
+				return True
+			else:
+				return False
+		elif una_carta_mas() == None or False:
+			if (Carta(ManoCPU.mayor_carta()).jerarquizar() >= 9):
+				return True
+			else:
+				return False
 	
 
 #################------ENVIDO
