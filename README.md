@@ -7,4 +7,3 @@ El objetivo es que ganar sea lo mas dificil posible, que la pc juege lo mejor qu
 Futuras mejoras:
 * Jugar muchas manos seguidas (Poder elegir entre 15 y 30 puntos) --> Asignarle puntos a las jugadas.
 * Que la pc juegue mejor.
-* Variar las respuestas del truco (truco, re truco, vale cuatro) segun corresponda.
