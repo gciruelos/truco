@@ -8,13 +8,14 @@
 # el resto debe ser interpretado como pies a inputs del jugador.
 #
 # Cuando se deba ingresar una carta se debe hacer de la siguiente manera:
-# "numero arabigo" de "palo en singular y mayuscula", por ejemplo "2 de Basto",
+# "numero arabigo" de "palo en singular y con mayuscula". Por ejemplo: "2 de Basto",
 # "4 de Espada" o "5 de Copa" son cartas validas, mientras que "dos de Basto", 
-# "4 de espada" o "5 de Copas" no lo son.
+# "4 de espada" o "5 de Copas" no lo son. (Proximamente lo seran).
 #
 #
 # Si desea irse al mazo, cuando le pregunte que carta quiere ingresar,
-# ingrese "Mazo" sin comillas o presione la combinacion de teclas EOF (En Unix-like es Ctrl+D)
+# ingrese "Mazo" sin comillas o presione la combinacion de teclas EOF 
+# (En Unix-like es Ctrl+D)
 #
 # 
 # Author: Gonzalo Ciruelos <comp.gonzalo@gmail.com>
@@ -26,7 +27,7 @@ from cartaymano import Mano, Carta, cartas_tiradas_MIA, cartas_tiradas_CPU
 
 import random
 
-SI = ('s','S','si','Si')		#Tambien podria ir con expresiones regulares, pero es mas facil asi.'[sS][iI]?'
+SI = ('s','S','si','Si')		#Tambien podria ir con expresiones regulares, pero es mas facil asi. ('[sS][iI]?')
 
 manos = [None, None, None]
 
@@ -151,7 +152,7 @@ def tercera_mano(quienva):
 		print '---> Perdi'
 	exit()
 	
-
+	
 
 def truco(quienlocanta, pasar = 0):
 	
@@ -312,7 +313,6 @@ def una_carta_mas():
 	except TypeError:
 		return True
 		
-
 
 def quejugar(mano, carta_del_jugador = None):
 	global manos

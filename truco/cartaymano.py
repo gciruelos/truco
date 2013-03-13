@@ -1,9 +1,9 @@
 #
 # Clases Carta y Mano con los metodos en los que esta basado casi todo 
 # el programa
+#
 # Author: Gonzalo Ciruelos <comp.gonzalo@gmail.com>
 # License: GPLv3
-#
 
 
 cartas_tiradas_MIA = []
