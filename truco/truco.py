@@ -124,7 +124,12 @@ def tercera_mano(quienva):
 		truco('el')
 		carta_del_oponente()
 	
+	if Carta(cartas_tiradas_CPU[2]).jerarquizar() > Carta(cartas_tiradas_MIA[2]).jerarquizar():
+		print '---> Gane'
+	else:
+		print '---> Perdi'
 	exit()
+	
 
 
 def truco(quienlocanta, pasar = 0):
@@ -233,7 +238,16 @@ def envido(soymano, tanto, mano):
 
 def carta_del_oponente():
 	while True:
-		cartadeljugador = raw_input('Que carta queres tirar? ')
+		try:
+			cartadeljugador = raw_input('Que carta queres tirar? ')
+			if cartadeljugador == 'Mazo':
+				exit()
+		except EOFError:
+			seguro = raw_input('Seguro queres irte al mazo? (S/n) ')
+			if seguro == 'S':
+				exit()
+			else:
+				continue
 		lacarta = cartadeljugador.split(' de ')
 		lacarta[0] = int(lacarta[0])
 		global ManoMIA
@@ -245,24 +259,35 @@ def carta_del_oponente():
 		return lacarta
 		break
 
+
 #################------UTILIDADES
 
 
 def una_carta_mas():
+	#EL JUGADOR tiene una carta mas devuelve True, si CPU tiene una carta mas False y si tienen iguales None.
 	global ManoMIA, ManoCPU
 	
-	try:
-		if len(ManoCPU.decir_cartas())<len(ManoMIA.decir_cartas()):			#EL JUGADOR tiene una carta mas
-			return True
-		elif len(ManoCPU.decir_cartas())>len(ManoMIA.decir_cartas()):
-			return False
-		else:
+	if type(ManoCPU.decir_cartas()[1]) == list:			#Si al CPU le queda mas de una carta
+		try:
+			if len(ManoCPU.decir_cartas())<len(ManoMIA.decir_cartas()):			
+				return True
+			elif len(ManoCPU.decir_cartas())>len(ManoMIA.decir_cartas()):
+				return False
+			else:
+				return None
+		except TypeError:
+			if ManoCPU.decir_cartas() == []:
+				return True
+			else:
+				return False
+	elif type(ManoCPU.decir_cartas()[1]) == (str or int):
+		if type(ManoMIA.decir_cartas()[1]) == (str or int):
 			return None
-	except TypeError:
-		if ManoCPU.decir_cartas() == []:
+		elif type(ManoMIA.decir_cartas()[1]) == list:
 			return True
 		else:
 			return False
+		
 
 
 def quejugar(mano, carta_del_jugador = None):
@@ -357,8 +382,10 @@ def truco_utilidad():
 	
 	global manos
 	
+	jugador_cartademas = una_carta_mas()
+	
 	if manos[1] == None:
-		if una_carta_mas() == True:
+		if jugador_cartademas == True:
 			if manos[0] == True and ((Carta(cartas_tiradas_CPU[1]).jerarquizar() or (Carta(ManoCPU.decir_cartas()[0]).jerarquizar())) >= 9):
 				return True
 			elif manos[0] == False:
@@ -371,7 +398,7 @@ def truco_utilidad():
 					return True
 				else:
 					return False
-		elif una_carta_mas() == None or False:
+		elif jugador_cartademas == None or False:
 			if manos[0] == True and ((Carta(ManoCPU.decir_cartas()[0]).jerarquizar() or (Carta(ManoCPU.decir_cartas()[1]).jerarquizar())) >= 9):
 				return True
 			elif manos[0] == False:
@@ -386,12 +413,12 @@ def truco_utilidad():
 					return False
 
 	elif manos[2] == None:
-		if una_carta_mas() == True:
+		if jugador_cartademas == True:
 			if Carta(cartas_tiradas_CPU[2]).jerarquizar() >= 9:
 				return True
 			else:
 				return False
-		elif una_carta_mas() == None or False:
+		elif jugador_cartademas == None or False:
 			if (Carta(ManoCPU.mayor_carta()).jerarquizar() >= 9):
 				return True
 			else:
