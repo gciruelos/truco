@@ -29,6 +29,8 @@ import random
 
 SI = ('s','S','si','Si')		#Tambien podria ir con expresiones regulares, pero es mas facil asi. ('[sS][iI]?')
 
+CualEnvido = ''
+
 manos = [None, None, None]
 
 tiene_el_quiero = None			#True lo tiene la pc, False el jugador
@@ -113,18 +115,20 @@ def segunda_mano(quienva):
 		manos[1] = 0
 		if manos[0] == 0:
 			print '---> Perdi la mano.'
+			pts('pJUG', truco_hecho+1)
 			exit()
 		tercera_mano('jugador')
 	elif Carta(cartas_tiradas_MIA[1]).jerarquizar() < Carta(cartas_tiradas_CPU[1]).jerarquizar():
 		manos[1] = 1
 		if manos[0] == 1:
 			print '---> Gane la mano.'
+			pts('pCPU', truco_hecho+1)
 			exit()
 		tercera_mano('cpu')
 	elif Carta(cartas_tiradas_MIA[1]).jerarquizar() == Carta(cartas_tiradas_CPU[1]).jerarquizar():
 		manos[1] = 2
 		tercera_mano('parda')
-		
+	
 
 def tercera_mano(quienva):
 	
@@ -147,9 +151,11 @@ def tercera_mano(quienva):
 		carta_del_oponente()
 	
 	if Carta(cartas_tiradas_CPU[2]).jerarquizar() > Carta(cartas_tiradas_MIA[2]).jerarquizar():
-		print '---> Gane'
+		print '---> Gane la mano.'
+		pts('pCPU', truco_hecho+1)
 	else:
-		print '---> Perdi'
+		print '---> Perdi la mano.'
+		pts('pJUG', truco_hecho+1)
 	exit()
 	
 	
@@ -208,12 +214,19 @@ def truco(quienlocanta, pasar = 0):
 		pass
 			
 	if vaqueriendo == False:
+		if tiene_el_quiero == True:
+			pts('pJUG', truco_hecho+1)
+		elif tiene_el_quiero == False:
+			pts('pCPU', truco_hecho+1)
+		#else:
+		#	print 'ERROR: def truco() al final'
+			
 		exit()
 
 
 def envido(soymano, tanto, mano):
 	
-	global envido_hecho, envido_CPU, envido_JUG
+	global envido_hecho, CualEnvido, envido_CPU, envido_JUG
 	
 	if envido_hecho == 0:
 		
@@ -221,13 +234,19 @@ def envido(soymano, tanto, mano):
 			if cantar_envido(tanto, tanto) == True:
 				env = raw_input('---> Real envido\n---> Queres? (S/n) ')
 				if env in SI:
+					CualEnvido = 'RealEnvido'
 					hablar_envido(mano)
+				else:
+					pts('pCPU', 1)
 				envido_hecho = 1
 			else:
 				if cantar_envido(tanto, 100) == True:
 					env = raw_input('---> Envido\n---> Queres? (S/n) ')
 					if env in SI:
+						CualEnvido = 'Envido'
 						hablar_envido(mano)
+					else:
+						pts('pCPU', 1)
 					envido_hecho = 1
 				#else:
 				#	print 'No cantes nada'
@@ -239,14 +258,17 @@ def envido(soymano, tanto, mano):
 				if cantar_envido(tanto, tanto) == True:
 					env = raw_input('---> Envido\n---> Queres? (S/n) ')
 					if env in SI:
+						CualEnvido = 'EnvidoEnvido'
 						hablar_envido(mano)
 						
 				else:
 					if cantar_envido(tanto, 100) == True:
 						print '---> Quiero'
+						CualEnvido = 'Envido'
 						hablar_envido(mano)
 					else:
 						print '---> No quiero'
+						pts('pJUG', 1)
 						
 			else:
 				pass
@@ -401,6 +423,35 @@ def randomizacion_de_eventos(probabilidad):
 		return False
 
 
+def pts(quien, cuanto):
+	global pCPU, pJUG
+	
+	if quien == 'pCPU':
+		pCPU += cuanto
+	elif quien == 'pJUG':
+		pJUG += cuanto
+	else:
+		print 'ERROR'
+
+
+def decir_puntos():
+	if len(pJUG) == 1:
+		j = '0'+str(pJUG)
+	else:
+		j = str(pCPU)
+	if len(pCPU) == 1:
+		c = '0'+str(pCPU)
+	else:
+		c = str(pCPU)
+
+	print '|   CPU   | Jugador   |'
+	print '|---------------------|'
+	print '|         |           |'
+	print '|    '+c+'|        '+j+'|'
+	print '|         |           |'
+	print '|         |           |'
+	
+
 #################------TRUCO
 
 
@@ -468,16 +519,28 @@ def cantar_envido(tanto, modificador):
 
 
 def hablar_envido(mano):
+	puntos = 0
+	if CualEnvido == 'Envido':
+		puntos = 2
+	if CualEnvido == 'RealEnvido':
+		puntos = 3
+	if CualEnvido == 'EnvidoEnvido':
+		puntos = 4
+	
 	if mano == True:
 		if envido_CPU >= envido_JUG:
 			print '---> Tengo '+str(envido_CPU)+' y vos decis \"son buenas\". Gane.'
+			pts('pCPU', puntos)
 		else:
 			print '---> Tengo '+str(envido_CPU)+' y vos '+str(envido_JUG)+'. Perdi.'
+			pts('pJUG', puntos)
 	elif mano == False:
 		if envido_CPU >= envido_JUG:
 			print '---> Tenes '+str(envido_JUG)+' y las mias son mejores: '+str(envido_CPU)+'. Gane.'
+			pts('pCPU', puntos)
 		else:
 			print '---> Tenes '+str(envido_JUG)+' y digo \"son buenas\". Perdi.'
+			pts('pJUG', puntos)
 
 
 #################------INGRESAR MANO
@@ -519,4 +582,8 @@ def ingresar_mano():
 	Mano_Quien = not Mano_Quien
 	##Hacer un while para las manos
 
-ingresar_mano()
+
+while (pJUG and pCPU)<30:
+	ingresar_mano()
+	decir_puntos()
+
