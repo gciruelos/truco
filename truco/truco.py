@@ -275,6 +275,8 @@ def carta_del_oponente():
 		global ManoMIA
 		if lacarta in ManoMIA.decir_cartas():
 			ManoMIA.tirar_carta(lacarta, 'jugador')
+		elif lacarta == ManoMIA.decir_cartas():
+			ManoMIA.tirar_carta(lacarta, 'jugador')
 		else:
 			print 'Ingresa una carta que tengas'
 			continue
