@@ -1,13 +1,29 @@
-##Truco
-#Por Gonzalo Ciruelos
-#Version 0.0.1beta
+## Truco
+# Version 0.0.1beta
+#
+#
+# Esta es una implementacion del juego de cartas truco hecha en Python.
+#
+# Cuando se deba ingresar una carta se debe hacer de la siguiente manera:
+# "numero arabigo" de "palo en singular y mayuscula", por ejemplo "2 de Basto",
+# "4 de Espada" o "5 de Copa" son cartas validas, mientras que "dos de Basto", 
+# "4 de espada" o "5 de Copas" no lo son.
+#
+#
+# Si desea irse al mazo, cuando le pregunte que carta quiere ingresar,
+# ingrese "Mazo" sin comillas o presione la combinacion de teclas EOF (En Unix-like es Ctrl+D)
+#
+# 
+# Author: Gonzalo Ciruelos <comp.gonzalo@gmail.com>
+# License: GPLv3
+
+
 
 from cartaymano import Mano, Carta, cartas_tiradas_MIA, cartas_tiradas_CPU
 
 import random
 
-#import re
-#SI = '[sS][iI]?'
+SI = ('s','S','si','Si')		#Tambien podria ir con expresiones regulares, pero es mas facil asi.'[sS][iI]?'
 
 manos = [None, None, None]
 
@@ -92,11 +108,13 @@ def segunda_mano(quienva):
 	if Carta(cartas_tiradas_MIA[1]).jerarquizar() > Carta(cartas_tiradas_CPU[1]).jerarquizar():
 		manos[1] = 0
 		if manos[0] == 0:
+			print '---> Perdi la mano.'
 			exit()
 		tercera_mano('jugador')
 	elif Carta(cartas_tiradas_MIA[1]).jerarquizar() < Carta(cartas_tiradas_CPU[1]).jerarquizar():
 		manos[1] = 1
 		if manos[0] == 1:
+			print '---> Gane la mano.'
 			exit()
 		tercera_mano('cpu')
 	elif Carta(cartas_tiradas_MIA[1]).jerarquizar() == Carta(cartas_tiradas_CPU[1]).jerarquizar():
@@ -152,7 +170,7 @@ def truco(quienlocanta, pasar = 0):
 		else:
 			cantar = 'S'
 		
-		if cantar == 'S':
+		if cantar in SI:
 			if truco_utilidad()==True:
 				print '---> Quiero'
 				truco_hecho += 1
@@ -172,7 +190,7 @@ def truco(quienlocanta, pasar = 0):
 				cantar = raw_input('---> Vale cuatro\n---> Queres? (S/n/R) ')
 			else:
 				pass
-			if cantar == 'S':
+			if cantar in SI:
 				truco_hecho += 1
 				tiene_el_quiero = True
 			elif cantar == 'R':
@@ -198,13 +216,13 @@ def envido(soymano, tanto, mano):
 		if soymano == True:
 			if cantar_envido(tanto, tanto) == True:
 				env = raw_input('---> Real envido\n---> Queres? (S/n) ')
-				if env == 'S':
+				if env in SI:
 					hablar_envido(mano)
 				envido_hecho = 1
 			else:
 				if cantar_envido(tanto, 100) == True:
 					env = raw_input('---> Envido\n---> Queres? (S/n) ')
-					if env == 'S':
+					if env in SI:
 						hablar_envido(mano)
 					envido_hecho = 1
 				#else:
@@ -212,11 +230,11 @@ def envido(soymano, tanto, mano):
 		else:
 			canto_envido = raw_input('Queres cantar envido? (S/n) ')
 			
-			if canto_envido == 'S':
+			if canto_envido in SI:
 				envido_hecho = 1
 				if cantar_envido(tanto, tanto) == True:
 					env = raw_input('---> Envido\n---> Queres? (S/n) ')
-					if env == 'S':
+					if env in SI:
 						hablar_envido(mano)
 						
 				else:
@@ -244,7 +262,7 @@ def carta_del_oponente():
 				exit()
 		except EOFError:
 			seguro = raw_input('Seguro queres irte al mazo? (S/n) ')
-			if seguro == 'S':
+			if seguro in SI:
 				exit()
 			else:
 				continue
