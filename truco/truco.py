@@ -4,6 +4,9 @@
 #
 # Esta es una implementacion del juego de cartas truco hecha en Python.
 #
+# Todo lo que esta dicho despues de una flecha ("--->") es porque lo dice la computadora
+# el resto debe ser interpretado como pies a inputs del jugador.
+#
 # Cuando se deba ingresar una carta se debe hacer de la siguiente manera:
 # "numero arabigo" de "palo en singular y mayuscula", por ejemplo "2 de Basto",
 # "4 de Espada" o "5 de Copa" son cartas validas, mientras que "dos de Basto", 
@@ -285,26 +288,29 @@ def una_carta_mas():
 	#EL JUGADOR tiene una carta mas devuelve True, si CPU tiene una carta mas False y si tienen iguales None.
 	global ManoMIA, ManoCPU
 	
-	if type(ManoCPU.decir_cartas()[1]) == list:			#Si al CPU le queda mas de una carta
-		try:
-			if len(ManoCPU.decir_cartas())<len(ManoMIA.decir_cartas()):			
-				return True
-			elif len(ManoCPU.decir_cartas())>len(ManoMIA.decir_cartas()):
-				return False
-			else:
+	try:
+		if type(ManoCPU.decir_cartas()[1]) == list:			#Si al CPU le queda mas de una carta
+			try:
+				if len(ManoCPU.decir_cartas())<len(ManoMIA.decir_cartas()):			
+					return True
+				elif len(ManoCPU.decir_cartas())>len(ManoMIA.decir_cartas()):
+					return False
+				else:
+					return None
+			except TypeError:
+				if ManoCPU.decir_cartas() == []:
+					return True
+				else:
+					return False
+		elif type(ManoCPU.decir_cartas()[1]) == (str or int):
+			if type(ManoMIA.decir_cartas()[1]) == (str or int):
 				return None
-		except TypeError:
-			if ManoCPU.decir_cartas() == []:
+			elif type(ManoMIA.decir_cartas()[1]) == list:
 				return True
 			else:
 				return False
-	elif type(ManoCPU.decir_cartas()[1]) == (str or int):
-		if type(ManoMIA.decir_cartas()[1]) == (str or int):
-			return None
-		elif type(ManoMIA.decir_cartas()[1]) == list:
-			return True
-		else:
-			return False
+	except TypeError:
+		return True
 		
 
 

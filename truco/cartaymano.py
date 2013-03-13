@@ -1,3 +1,11 @@
+#
+# Clases Carta y Mano con los metodos en los que esta basado casi todo 
+# el programa
+# Author: Gonzalo Ciruelos <comp.gonzalo@gmail.com>
+# License: GPLv3
+#
+
+
 cartas_tiradas_MIA = []
 cartas_tiradas_CPU = []
 
@@ -7,6 +15,7 @@ def suma_envido(n,m):
 	if m>=10:
 		m = 0
 	return 20+n+m
+
 
 class Carta:
 	def __init__(self, carta):
@@ -135,3 +144,4 @@ class Mano:
 		for carta in cartas_que_tengo:
 			cartas_returnear.append(str(Carta(carta).numero)+' de '+str(Carta(carta).palo))
 		return ', '.join(cartas_returnear)
+
