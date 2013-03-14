@@ -478,6 +478,7 @@ def analizar_nombre(nom):
 	
 	return nom
 
+
 #################------TRUCO
 
 
