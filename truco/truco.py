@@ -79,13 +79,21 @@ def primera_mano(tanto, mano):
 		envido(False, tanto, mano)
 		carta_del_oponente()
 
-	if Carta(cartas_tiradas_MIA[0]).jerarquizar() > Carta(cartas_tiradas_CPU[0]).jerarquizar():
+	carta_1_CPU = cartas_tiradas_CPU[0]
+	carta_1_MIA = cartas_tiradas_MIA[0]
+	
+	
+	#print cartas_tiradas_MIA, cartas_tiradas_CPU
+	#print carta_1_MIA, carta_1_CPU														PARA DEBUG
+	#print Carta(carta_1_MIA).jerarquizar(), Carta(carta_1_CPU).jerarquizar()
+	
+	if Carta(carta_1_MIA).jerarquizar() > Carta(carta_1_CPU).jerarquizar():
 		manos[0] = 0
 		segunda_mano('jugador')
-	elif Carta(cartas_tiradas_MIA[0]).jerarquizar() < Carta(cartas_tiradas_CPU[0]).jerarquizar():
+	elif Carta(carta_1_MIA).jerarquizar() < Carta(carta_1_CPU).jerarquizar():
 		manos[0] = 1
 		segunda_mano('cpu')
-	elif Carta(cartas_tiradas_MIA[0]).jerarquizar() == Carta(cartas_tiradas_CPU[0]).jerarquizar():
+	elif Carta(carta_1_MIA).jerarquizar() == Carta(carta_1_CPU).jerarquizar():
 		manos[0] = 2
 		segunda_mano('parda')
 
@@ -109,22 +117,25 @@ def segunda_mano(quienva):
 		quejugar(None)
 		truco('el')
 		carta_del_oponente()
+		
+	carta_2_CPU = cartas_tiradas_CPU[1]
+	carta_2_MIA = cartas_tiradas_MIA[1]
 	
-	if Carta(cartas_tiradas_MIA[1]).jerarquizar() > Carta(cartas_tiradas_CPU[1]).jerarquizar():
+	if Carta(carta_2_MIA).jerarquizar() > Carta(carta_2_CPU).jerarquizar():
 		manos[1] = 0
 		if manos[0] == 0:
 			print '---> Perdi la mano.'
 			pts('pJUG', truco_hecho+1)
 			raise ZeroDivisionError
 		tercera_mano('jugador')
-	elif Carta(cartas_tiradas_MIA[1]).jerarquizar() < Carta(cartas_tiradas_CPU[1]).jerarquizar():
+	elif Carta(carta_2_MIA).jerarquizar() < Carta(carta_2_CPU).jerarquizar():
 		manos[1] = 1
 		if manos[0] == 1:
 			print '---> Gane la mano.'
 			pts('pCPU', truco_hecho+1)
 			raise ZeroDivisionError
 		tercera_mano('cpu')
-	elif Carta(cartas_tiradas_MIA[1]).jerarquizar() == Carta(cartas_tiradas_CPU[1]).jerarquizar():
+	elif Carta(carta_2_MIA).jerarquizar() == Carta(carta_2_CPU).jerarquizar():
 		manos[1] = 2
 		tercera_mano('parda')
 	
@@ -148,8 +159,11 @@ def tercera_mano(quienva):
 		quejugar(None)
 		truco('el')
 		carta_del_oponente()
+
+	carta_3_CPU = cartas_tiradas_CPU[2]
+	carta_3_MIA = cartas_tiradas_MIA[2]
 	
-	if Carta(cartas_tiradas_CPU[2]).jerarquizar() > Carta(cartas_tiradas_MIA[2]).jerarquizar():
+	if Carta(carta_3_CPU).jerarquizar() > Carta(carta_3_MIA).jerarquizar():
 		print '---> Gane la mano.'
 		pts('pCPU', truco_hecho+1)
 	else:
@@ -440,15 +454,29 @@ def decir_puntos():
 		c = '0'+str(pCPU)
 	else:
 		c = str(pCPU)
+		
+	nombre = analizar_nombre(Nombre_Jugador)
 
 	print '\n'
-	print '|   CPU   | Jugador   |'
+	print '|   CPU   |'+nombre+'|'
 	print '|---------------------|'
 	print '|         |           |'
 	print '|      '+c+' |        '+j+' |'
 	print '|         |           |'
 	print '\n'
 	
+	
+def analizar_nombre(nom):
+	#Tiene que tener 11 caracteres
+	if nom == '':
+		nom = ' Jugador   '
+	elif len(nom) >= 12:
+		nom = nom[0:8]+'...'
+	else:
+		espacios=11-(len(nom)+1)
+		nom = ' '+nom+' '*espacios
+	
+	return nom
 
 #################------TRUCO
 
@@ -517,12 +545,12 @@ def cantar_envido(tanto, modificador):
 
 
 def hablar_envido(mano):
-	puntos = 0
+	#puntos = 0
 	if CualEnvido == 'Envido':
 		puntos = 2
-	if CualEnvido == 'RealEnvido':
+	elif CualEnvido == 'RealEnvido':
 		puntos = 3
-	if CualEnvido == 'EnvidoEnvido':
+	elif CualEnvido == 'EnvidoEnvido':
 		puntos = 4
 	
 	if mano == True:
@@ -577,8 +605,11 @@ def ingresar_mano():
 	primera_mano(envido_CPU, Mano_Quien)
 
 
+ACuanto = int(raw_input('A cuanto queres jugar? (15/30) '))
+Nombre_Jugador = str(raw_input('Como es tu nombre? '))
+print '\n\n'
 
-while (pJUG and pCPU)<15:
+while (pJUG and pCPU)<ACuanto:
 	try:
 		ingresar_mano()
 	except EOFError:
@@ -591,6 +622,7 @@ while (pJUG and pCPU)<15:
 		Limpiar().limpiarvariables()
 		envido_hecho = 0
 		truco_hecho = 0
+		tiene_el_quiero = None
 		manos = [None, None, None]
 		
 		decir_puntos()

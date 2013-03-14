@@ -153,6 +153,9 @@ class Limpiar:
 	def __init__(self):
 		global cartas_tiradas_CPU, cartas_tiradas_MIA
 	def limpiarvariables(self):
-		cartas_tiradas_CPU = []
-		cartas_tiradas_MIA = []
-		print cartas_tiradas_MIA, cartas_tiradas_CPU
+		while len(cartas_tiradas_CPU) != 0:
+			cartas_tiradas_CPU.pop(0)
+		while len(cartas_tiradas_MIA) != 0:
+			cartas_tiradas_MIA.pop(0)
+
+
