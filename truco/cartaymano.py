@@ -105,7 +105,10 @@ class Mano:
 			cartas_tiradas_CPU.append(carta)
 		else:
 			self.cartas.remove(carta)
-			print 'Las cartas que te quedan son', self
+			if self.cartas == []:
+				pass
+			else:
+				print 'Las cartas que te quedan son', self
 			cartas_tiradas_MIA.append(carta)
 	def mayor_carta(self):
 		if len(self.cartas) != 1:
@@ -145,3 +148,11 @@ class Mano:
 			cartas_returnear.append(str(Carta(carta).numero)+' de '+str(Carta(carta).palo))
 		return ', '.join(cartas_returnear)
 
+
+class Limpiar:
+	def __init__(self):
+		global cartas_tiradas_CPU, cartas_tiradas_MIA
+	def limpiarvariables(self):
+		cartas_tiradas_CPU = []
+		cartas_tiradas_MIA = []
+		print cartas_tiradas_MIA, cartas_tiradas_CPU

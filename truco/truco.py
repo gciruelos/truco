@@ -14,8 +14,7 @@
 #
 #
 # Si desea irse al mazo, cuando le pregunte que carta quiere ingresar,
-# ingrese "Mazo" sin comillas o presione la combinacion de teclas EOF 
-# (En Unix-like es Ctrl+D)
+# ingrese "Mazo" sin comillas
 #
 # 
 # Author: Gonzalo Ciruelos <comp.gonzalo@gmail.com>
@@ -23,7 +22,7 @@
 
 
 
-from cartaymano import Mano, Carta, cartas_tiradas_MIA, cartas_tiradas_CPU
+from cartaymano import Mano, Carta, Limpiar, cartas_tiradas_MIA, cartas_tiradas_CPU
 
 import random
 
@@ -93,7 +92,7 @@ def primera_mano(tanto, mano):
 		
 def segunda_mano(quienva):
 	
-	global manos, mis_cartas_tiradas, cartas, cartas_tiradas_CPU, cartas_tiradas_MIA
+	global manos, mis_cartas_tiradas, cartas, truco_hecho, cartas_tiradas_CPU, cartas_tiradas_MIA
 
 	if quienva == 'jugador':
 		truco('el')
@@ -116,14 +115,14 @@ def segunda_mano(quienva):
 		if manos[0] == 0:
 			print '---> Perdi la mano.'
 			pts('pJUG', truco_hecho+1)
-			exit()
+			raise ZeroDivisionError
 		tercera_mano('jugador')
 	elif Carta(cartas_tiradas_MIA[1]).jerarquizar() < Carta(cartas_tiradas_CPU[1]).jerarquizar():
 		manos[1] = 1
 		if manos[0] == 1:
 			print '---> Gane la mano.'
 			pts('pCPU', truco_hecho+1)
-			exit()
+			raise ZeroDivisionError
 		tercera_mano('cpu')
 	elif Carta(cartas_tiradas_MIA[1]).jerarquizar() == Carta(cartas_tiradas_CPU[1]).jerarquizar():
 		manos[1] = 2
@@ -132,7 +131,7 @@ def segunda_mano(quienva):
 
 def tercera_mano(quienva):
 	
-	global manos, mis_cartas_tiradas, cartas, cartas_tiradas_CPU, cartas_tiradas_MIA
+	global manos, mis_cartas_tiradas, cartas, truco_hecho, cartas_tiradas_CPU, cartas_tiradas_MIA
 	
 	if quienva == 'jugador':
 		truco('el')
@@ -156,7 +155,7 @@ def tercera_mano(quienva):
 	else:
 		print '---> Perdi la mano.'
 		pts('pJUG', truco_hecho+1)
-	exit()
+	raise ZeroDivisionError
 	
 	
 
@@ -181,10 +180,10 @@ def truco(quienlocanta, pasar = 0):
 			cantar = 'S'
 		
 		if cantar in SI:
-			if truco_utilidad()==True:
+			if truco_utilidad() == True:
 				print '---> Quiero'
 				truco_hecho += 1
-				tiene_el_quiero = False
+				tiene_el_quiero = True
 			else:
 				print '---> No quiero'
 				vaqueriendo = False
@@ -202,7 +201,7 @@ def truco(quienlocanta, pasar = 0):
 				pass
 			if cantar in SI:
 				truco_hecho += 1
-				tiene_el_quiero = True
+				tiene_el_quiero = False
 			elif cantar == 'R':
 				truco_hecho += 1
 				truco('el',1)
@@ -218,10 +217,13 @@ def truco(quienlocanta, pasar = 0):
 			pts('pJUG', truco_hecho+1)
 		elif tiene_el_quiero == False:
 			pts('pCPU', truco_hecho+1)
-		#else:
-		#	print 'ERROR: def truco() al final'
+		else:								#tiene_el_quiero == None
+			if quienlocanta == 'cpu':
+				pts('pCPU', 1)
+			elif quienlocanta == 'el':
+				pts('pJUG', 1)
 			
-		exit()
+		raise ZeroDivisionError
 
 
 def envido(soymano, tanto, mano):
@@ -282,16 +284,11 @@ def envido(soymano, tanto, mano):
 
 def carta_del_oponente():
 	while True:
-		try:
-			cartadeljugador = raw_input('Que carta queres tirar? ')
-			if cartadeljugador == 'Mazo':
-				exit()
-		except EOFError:
-			seguro = raw_input('Seguro queres irte al mazo? (S/n) ')
-			if seguro in SI:
-				exit()
-			else:
-				continue
+		cartadeljugador = raw_input('Que carta queres tirar? ')
+		if cartadeljugador == 'Mazo':
+			pts('pCPU', truco_hecho+1)
+			raise ZeroDivisionError
+		
 		lacarta = cartadeljugador.split(' de ')
 		lacarta[0] = int(lacarta[0])
 		global ManoMIA
@@ -392,7 +389,7 @@ def quejugar(mano, carta_del_jugador = None):
 				ManoCPU.tirar_carta(ManoCPU.mayor_carta())
 			else: 
 				print '---> Ganaste la mano, bien jugado.'
-				exit()
+				raise ZeroDivisionError
 		elif mano == True:
 			if Carta(ManoCPU.mayor_carta()).jerarquizar() >= 10:
 				ManoCPU.tirar_carta(ManoCPU.mayor_carta())
@@ -408,7 +405,7 @@ def quejugar(mano, carta_del_jugador = None):
 				ManoCPU.tirar_carta(ManoCPU.mayor_carta())				
 			else: 
 				print '---> Me voy al mazo.'
-				exit()	
+				raise ZeroDivisionError
 		elif mano == True:
 			ManoCPU.tirar_carta(ManoCPU.mayor_carta())
 		else:
@@ -431,25 +428,26 @@ def pts(quien, cuanto):
 	elif quien == 'pJUG':
 		pJUG += cuanto
 	else:
-		print 'ERROR'
+		print 'ERROR: def pts()'
 
 
 def decir_puntos():
-	if len(pJUG) == 1:
+	if len(str(pJUG)) == 1:
 		j = '0'+str(pJUG)
 	else:
-		j = str(pCPU)
-	if len(pCPU) == 1:
+		j = str(pJUG)
+	if len(str(pCPU)) == 1:
 		c = '0'+str(pCPU)
 	else:
 		c = str(pCPU)
 
+	print '\n'
 	print '|   CPU   | Jugador   |'
 	print '|---------------------|'
 	print '|         |           |'
-	print '|    '+c+'|        '+j+'|'
+	print '|      '+c+' |        '+j+' |'
 	print '|         |           |'
-	print '|         |           |'
+	print '\n'
 	
 
 #################------TRUCO
@@ -577,13 +575,23 @@ def ingresar_mano():
 	
 	global Mano_Quien
 	primera_mano(envido_CPU, Mano_Quien)
-	
-	#Cambia quien es mano
-	Mano_Quien = not Mano_Quien
-	##Hacer un while para las manos
 
 
-while (pJUG and pCPU)<30:
-	ingresar_mano()
-	decir_puntos()
+
+while (pJUG and pCPU)<15:
+	try:
+		ingresar_mano()
+	except EOFError:
+		print '\n\nQue lastima.\n'
+		exit()
+	except ZeroDivisionError:
+		#Cambia quien es mano
+		Mano_Quien = not Mano_Quien
+		#Vuelven a ser 0 todos los contadores
+		Limpiar().limpiarvariables()
+		envido_hecho = 0
+		truco_hecho = 0
+		manos = [None, None, None]
+		
+		decir_puntos()
 
