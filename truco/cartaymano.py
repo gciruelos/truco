@@ -90,6 +90,20 @@ class Mano:
 			return suma_envido(self.c3.numero, self.c1.numero)
 		else:
 			return 0
+	def listar_cartas(self):
+		if len(self.cartas)==1:
+			return '\n1. '+str(Carta(self.cartas[0])) 
+		if len(self.cartas)==2:
+			return '\n1. '+str(Carta(self.cartas[0]))+'\n2. '+str(Carta(self.cartas[1]))
+		if len(self.cartas)==3:
+			return '\n1. '+str(Carta(self.cartas[0]))+'\n2. '+str(Carta(self.cartas[1]))+'\n3. '+str(Carta(self.cartas[2]))
+	def contar_cartas(self):
+		if type(self.decir_cartas()[0]) == int:
+			return 1
+		elif type(self.decir_cartas()[0]) == list:
+			return len(self.decir_cartas())
+		else:
+			return 0
 	def decir_cartas(self):
 		if len(self.cartas)==1:
 			return Carta(self.cartas[0]).decir()
@@ -105,10 +119,10 @@ class Mano:
 			cartas_tiradas_CPU.append(carta)
 		else:
 			self.cartas.remove(carta)
-			if self.cartas == []:
-				pass
-			else:
-				print 'Las cartas que te quedan son', self
+			#if self.cartas == []:
+			#	pass
+			#else:
+			#	print 'Las cartas que te quedan son', self
 			cartas_tiradas_MIA.append(carta)
 	def mayor_carta(self):
 		if len(self.cartas) != 1:

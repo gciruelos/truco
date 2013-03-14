@@ -297,22 +297,45 @@ def envido(soymano, tanto, mano):
 
 
 def carta_del_oponente():
+	global ManoMIA
+	
+	print ManoMIA.listar_cartas()
+	
 	while True:
-		cartadeljugador = raw_input('Que carta queres tirar? ')
+		if una_carta_mas() == False:
+			if manos[0] == None:
+				otro = cartas_tiradas_CPU[0]
+			elif manos[1] == None:
+				otro = cartas_tiradas_CPU[1]
+			else:
+				otro = cartas_tiradas_CPU[2]
+			cartadeljugador = raw_input('Que carta queres tirar? (El tiro un'+str(Carta(otro))+') ')
+			
+		else:
+			cartadeljugador = raw_input('Que carta queres tirar? ')
+			
 		if cartadeljugador == 'Mazo':
 			pts('pCPU', truco_hecho+1)
 			raise ZeroDivisionError
+		try:
+			ndeorden = int(cartadeljugador)
+		except:
+			'Ingresa un numero valido'
+			continue
+			
+		if ndeorden > ManoMIA.contar_cartas() or ndeorden < 0:
+			'Ingresa un numero valido'
+			continue
 		
-		lacarta = cartadeljugador.split(' de ')
-		lacarta[0] = int(lacarta[0])
-		global ManoMIA
-		if lacarta in ManoMIA.decir_cartas():
+		if ManoMIA.contar_cartas() == 1:
+			lacarta = ManoMIA.decir_cartas()
 			ManoMIA.tirar_carta(lacarta, 'jugador')
-		elif lacarta == ManoMIA.decir_cartas():
+		elif ManoMIA.contar_cartas() > 1:
+			lacarta = ManoMIA.decir_cartas()[ndeorden-1]
 			ManoMIA.tirar_carta(lacarta, 'jugador')
 		else:
-			print 'Ingresa una carta que tengas'
-			continue
+			print 'No tenes mas cartas'
+		
 		return lacarta
 		break
 
@@ -473,7 +496,7 @@ def analizar_nombre(nom):
 	elif len(nom) >= 12:
 		nom = nom[0:8]+'...'
 	else:
-		espacios=11-(len(nom))
+		espacios=11-(len(nom)+1)
 		nom = ' '+nom+' '*espacios
 	
 	return nom
@@ -613,7 +636,7 @@ except:
 Nombre_Jugador = str(raw_input('Como es tu nombre? '))
 print '\n\n'
 
-while (pJUG and pCPU)<ACuanto:
+while (pJUG or pCPU)<ACuanto:
 	try:
 		ingresar_mano()
 	except EOFError:
