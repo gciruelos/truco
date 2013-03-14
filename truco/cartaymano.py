@@ -81,22 +81,28 @@ class Mano:
 			self.c1 = Carta(self.cartas[0])
 			self.c2 = Carta(self.cartas[1])
 			self.c3 = Carta(self.cartas[2])
-	def tengo_envido(self):		
-		if self.c2.palo == self.c1.palo:
+	def tengo_envido(self):
+		if  (self.c2.palo == self.c1.palo) and (self.c3.palo == self.c1.palo):
+			numeros = [self.c1.numero, self.c2.numero, self.c3.numero]
+			max1 = max(numeros)
+			numeros.remove(max1)
+			return suma_envido(max1, max(numeros))
+		elif self.c2.palo == self.c1.palo:
 			return suma_envido(self.c2.numero, self.c1.numero)
 		elif self.c2.palo == self.c3.palo:
 			return suma_envido(self.c2.numero, self.c3.numero)
 		elif self.c3.palo == self.c1.palo:
 			return suma_envido(self.c3.numero, self.c1.numero)
 		else:
-			return 0
+			numeros = [self.c1.numero, self.c2.numero, self.c3.numero]
+			return max(numeros)
 	def listar_cartas(self):
 		if len(self.cartas)==1:
-			return '\n1. '+str(Carta(self.cartas[0])) 
+			return '\n1. '+str(self.c1) 
 		if len(self.cartas)==2:
-			return '\n1. '+str(Carta(self.cartas[0]))+'\n2. '+str(Carta(self.cartas[1]))
+			return '\n1. '+str(self.c1)+'\n2. '+str(self.c2)
 		if len(self.cartas)==3:
-			return '\n1. '+str(Carta(self.cartas[0]))+'\n2. '+str(Carta(self.cartas[1]))+'\n3. '+str(Carta(self.cartas[2]))
+			return '\n1. '+str(self.c1)+'\n2. '+str(self.c2)+'\n3. '+str(self.c3)
 	def contar_cartas(self):
 		if type(self.decir_cartas()[0]) == int:
 			return 1
@@ -106,11 +112,11 @@ class Mano:
 			return 0
 	def decir_cartas(self):
 		if len(self.cartas)==1:
-			return Carta(self.cartas[0]).decir()
+			return self.c1.decir()
 		if len(self.cartas)==2:
-			return [Carta(self.cartas[0]).decir(), Carta(self.cartas[1]).decir()]
+			return [self.c1.decir(), self.c2.decir()]
 		if len(self.cartas)==3:
-			return [Carta(self.cartas[0]).decir(), Carta(self.cartas[1]).decir(), Carta(self.cartas[2]).decir()]
+			return [self.c1.decir(), self.c2.decir(), self.c3.decir()]
 	def tirar_carta(self, carta, quien='CPU'):
 		global cartas_tiradas_CPU, cartas_tiradas_MIA
 		if quien=='CPU':

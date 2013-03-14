@@ -123,14 +123,14 @@ def segunda_mano(quienva):
 	
 	if Carta(carta_2_MIA).jerarquizar() > Carta(carta_2_CPU).jerarquizar():
 		manos[1] = 0
-		if manos[0] == 0:
+		if manos[0] == (0 or 2):
 			print '---> Perdi la mano.'
 			pts('pJUG', truco_hecho+1)
 			raise ZeroDivisionError
 		tercera_mano('jugador')
 	elif Carta(carta_2_MIA).jerarquizar() < Carta(carta_2_CPU).jerarquizar():
 		manos[1] = 1
-		if manos[0] == 1:
+		if manos[0] == (1 or 2):
 			print '---> Gane la mano.'
 			pts('pCPU', truco_hecho+1)
 			raise ZeroDivisionError
@@ -641,7 +641,7 @@ Nombre_Jugador = str(raw_input('Como es tu nombre? '))
 print '\n\n'
 
 
-while (pJUG and pCPU) <= ACuanto:
+while (pJUG < ACuanto) and (pCPU < ACuanto):
 	try:
 		ingresar_mano()
 	except EOFError:
