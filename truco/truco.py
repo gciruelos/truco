@@ -1,5 +1,5 @@
 ## Truco
-# Version 0.0.1beta
+# Version 0.0.1
 #
 #
 # Esta es una implementacion del juego de cartas truco hecha en Python.
@@ -473,7 +473,7 @@ def analizar_nombre(nom):
 	elif len(nom) >= 12:
 		nom = nom[0:8]+'...'
 	else:
-		espacios=11-(len(nom)+1)
+		espacios=11-(len(nom))
 		nom = ' '+nom+' '*espacios
 	
 	return nom
@@ -605,8 +605,11 @@ def ingresar_mano():
 	global Mano_Quien
 	primera_mano(envido_CPU, Mano_Quien)
 
-
-ACuanto = int(raw_input('A cuanto queres jugar? (15/30) '))
+try:
+	ACuanto = int(raw_input('A cuanto queres jugar? (15/30) '))
+except:
+	ACuanto = 15
+	
 Nombre_Jugador = str(raw_input('Como es tu nombre? '))
 print '\n\n'
 
@@ -627,4 +630,9 @@ while (pJUG and pCPU)<ACuanto:
 		manos = [None, None, None]
 		
 		decir_puntos()
+
+if pJUG>=ACuanto:
+	print '\n\n\n----GANASTE----\n'
+else:
+	print '\n\n\n----PERDISTE----\n'
 
