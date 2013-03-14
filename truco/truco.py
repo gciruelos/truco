@@ -302,29 +302,30 @@ def carta_del_oponente():
 	print ManoMIA.listar_cartas()
 	
 	while True:
-		if una_carta_mas() == False:
+		if una_carta_mas() == True:
 			if manos[0] == None:
 				otro = cartas_tiradas_CPU[0]
 			elif manos[1] == None:
 				otro = cartas_tiradas_CPU[1]
 			else:
 				otro = cartas_tiradas_CPU[2]
-			cartadeljugador = raw_input('Que carta queres tirar? (El tiro un'+str(Carta(otro))+') ')
+			cartadeljugador = raw_input('Que carta queres tirar? (El tiro un '+str(Carta(otro))+') ')
 			
 		else:
 			cartadeljugador = raw_input('Que carta queres tirar? ')
-			
+		
+
 		if cartadeljugador == 'Mazo':
 			pts('pCPU', truco_hecho+1)
 			raise ZeroDivisionError
 		try:
 			ndeorden = int(cartadeljugador)
 		except:
-			'Ingresa un numero valido'
+			print 'Ingresa un numero valido'
 			continue
 			
-		if ndeorden > ManoMIA.contar_cartas() or ndeorden < 0:
-			'Ingresa un numero valido'
+		if ndeorden > ManoMIA.contar_cartas() or ndeorden <= 0:
+			print 'Ingresa un numero valido'
 			continue
 		
 		if ManoMIA.contar_cartas() == 1:
@@ -628,15 +629,19 @@ def ingresar_mano():
 	global Mano_Quien
 	primera_mano(envido_CPU, Mano_Quien)
 
+
 try:
 	ACuanto = int(raw_input('A cuanto queres jugar? (15/30) '))
 except:
+	print 'Por defecto se juega a 15'
 	ACuanto = 15
+
 	
 Nombre_Jugador = str(raw_input('Como es tu nombre? '))
 print '\n\n'
 
-while (pJUG or pCPU)<ACuanto:
+
+while (pJUG and pCPU) <= ACuanto:
 	try:
 		ingresar_mano()
 	except EOFError:
@@ -653,6 +658,7 @@ while (pJUG or pCPU)<ACuanto:
 		manos = [None, None, None]
 		
 		decir_puntos()
+
 
 if pJUG>=ACuanto:
 	print '\n\n\n----GANASTE----\n'
