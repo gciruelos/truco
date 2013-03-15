@@ -2,19 +2,17 @@
 # Version 0.0.1
 #
 #
-# Esta es una implementacion del juego de cartas truco hecha en Python.
+# Todo lo que esta dicho despues de una flecha ("--->") es porque lo dice
+# la computadora el resto debe ser interpretado como pies a inputs del jugador.
 #
-# Todo lo que esta dicho despues de una flecha ("--->") es porque lo dice la computadora
-# el resto debe ser interpretado como pies a inputs del jugador.
+# Cuando se deba ingresar una carta se debe ingresar el numero que aparece
+# a la izquierda de la carta.
 #
-# Cuando se deba ingresar una carta se debe hacer de la siguiente manera:
-# "numero arabigo" de "palo en singular y con mayuscula". Por ejemplo: "2 de Basto",
-# "4 de Espada" o "5 de Copa" son cartas validas, mientras que "dos de Basto", 
-# "4 de espada" o "5 de Copas" no lo son. (Proximamente lo seran).
+# En las preguntas en las que se espera (S/n) si se pone algo distinto a
+# lo que el programa intepreta como una respuesta afirmativa, el valor por defecto es "no".
 #
-#
-# Si desea irse al mazo, cuando le pregunte que carta quiere ingresar,
-# ingrese "Mazo" sin comillas
+# Si desea irse al mazo, cuando le pregunte que carta quiere ingresar, 
+# ingrese "Mazo" sin comillas.
 #
 # 
 # Author: Gonzalo Ciruelos <comp.gonzalo@gmail.com>
