@@ -327,6 +327,7 @@ def carta_del_oponente():
 		if ndeorden > ManoMIA.contar_cartas() or ndeorden <= 0:
 			print 'Ingresa un numero valido'
 			continue
+
 		
 		if ManoMIA.contar_cartas() == 1:
 			lacarta = ManoMIA.decir_cartas()

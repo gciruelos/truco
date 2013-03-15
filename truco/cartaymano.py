@@ -98,11 +98,11 @@ class Mano:
 			return max(numeros)
 	def listar_cartas(self):
 		if len(self.cartas)==1:
-			return '\n1. '+str(self.c1) 
+			return '\n1. '+str(Carta(self.cartas[0])) 
 		if len(self.cartas)==2:
-			return '\n1. '+str(self.c1)+'\n2. '+str(self.c2)
+			return '\n1. '+str(Carta(self.cartas[0]))+'\n2. '+str(Carta(self.cartas[1]))
 		if len(self.cartas)==3:
-			return '\n1. '+str(self.c1)+'\n2. '+str(self.c2)+'\n3. '+str(self.c3)
+			return '\n1. '+str(Carta(self.cartas[0]))+'\n2. '+str(Carta(self.cartas[1]))+'\n3. '+str(Carta(self.cartas[2]))
 	def contar_cartas(self):
 		if type(self.decir_cartas()[0]) == int:
 			return 1
