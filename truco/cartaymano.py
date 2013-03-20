@@ -9,6 +9,8 @@
 cartas_tiradas_MIA = []
 cartas_tiradas_CPU = []
 
+palo_del_envido = ''
+
 def suma_envido(n,m):
 	if n>=10:
 		n = 0
@@ -82,16 +84,36 @@ class Mano:
 			self.c2 = Carta(self.cartas[1])
 			self.c3 = Carta(self.cartas[2])
 	def tengo_envido(self):
+		global palo_del_envido
 		if  (self.c2.palo == self.c1.palo) and (self.c3.palo == self.c1.palo):
+			palo_del_envido = self.c1.palo
 			numeros = [self.c1.numero, self.c2.numero, self.c3.numero]
-			max1 = max(numeros)
-			numeros.remove(max1)
-			return suma_envido(max1, max(numeros))
+			figuras = [10, 11, 12]
+			cantidad_figuras = 0
+			for n in numeros:
+				if n in figuras:
+					cantidad_figuras += 1
+			if cantidad_figuras == 0:
+				max1 = max(numeros)
+				numeros.remove(max1)
+				return suma_envido(max1, max(numeros))
+			elif cantidad_figuras == 1:
+				min1 = min(numeros)
+				numeros.remove(min1)
+				return suma_envido(min1, min(numeros))
+			elif cantidad_figuras == 2:
+				return 20+min(numeros)
+			else:
+				return 20
+		
 		elif self.c2.palo == self.c1.palo:
+			palo_del_envido = self.c1.palo
 			return suma_envido(self.c2.numero, self.c1.numero)
 		elif self.c2.palo == self.c3.palo:
+			palo_del_envido = self.c2.palo
 			return suma_envido(self.c2.numero, self.c3.numero)
 		elif self.c3.palo == self.c1.palo:
+			palo_del_envido = self.c1.palo
 			return suma_envido(self.c3.numero, self.c1.numero)
 		else:
 			numeros = [self.c1.numero, self.c2.numero, self.c3.numero]
@@ -112,11 +134,11 @@ class Mano:
 			return 0
 	def decir_cartas(self):
 		if len(self.cartas)==1:
-			return self.c1.decir()
+			return Carta(self.cartas[0]).decir()
 		if len(self.cartas)==2:
-			return [self.c1.decir(), self.c2.decir()]
+			return [Carta(self.cartas[0]).decir(), Carta(self.cartas[1]).decir()]
 		if len(self.cartas)==3:
-			return [self.c1.decir(), self.c2.decir(), self.c3.decir()]
+			return [Carta(self.cartas[0]).decir(), Carta(self.cartas[1]).decir(), Carta(self.cartas[2]).decir()]
 	def tirar_carta(self, carta, quien='CPU'):
 		global cartas_tiradas_CPU, cartas_tiradas_MIA
 		if quien=='CPU':

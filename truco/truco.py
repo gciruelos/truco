@@ -20,7 +20,9 @@
 
 
 
-from cartaymano import Mano, Carta, Limpiar, cartas_tiradas_MIA, cartas_tiradas_CPU
+
+
+from cartaymano import Mano, Carta, Limpiar, cartas_tiradas_MIA, cartas_tiradas_CPU, palo_del_envido
 
 import random
 
@@ -121,14 +123,14 @@ def segunda_mano(quienva):
 	
 	if Carta(carta_2_MIA).jerarquizar() > Carta(carta_2_CPU).jerarquizar():
 		manos[1] = 0
-		if manos[0] == (0 or 2):
+		if manos[0] == 0 or manos[0] ==  2:
 			print '---> Perdi la mano.'
 			pts('pJUG', truco_hecho+1)
 			raise ZeroDivisionError
 		tercera_mano('jugador')
 	elif Carta(carta_2_MIA).jerarquizar() < Carta(carta_2_CPU).jerarquizar():
 		manos[1] = 1
-		if manos[0] == (1 or 2):
+		if manos[0] == 1 or manos[0] ==  2:
 			print '---> Gane la mano.'
 			pts('pCPU', truco_hecho+1)
 			raise ZeroDivisionError
@@ -375,6 +377,7 @@ def una_carta_mas():
 def quejugar(mano, carta_del_jugador = None):
 	global manos
 	global ManoCPU, ManoMIA
+	global palo_del_envido
 	
 	maximo = 15
 	minimo = 0
@@ -395,9 +398,18 @@ def quejugar(mano, carta_del_jugador = None):
 				for carta in posibles:									#Si hay, elije la menor
 					if Carta(carta).jerarquizar() < maximo:
 						maximo = Carta(carta).jerarquizar()
+				cartas_a_tirar = []
 				for carta2 in ManoCPU.decir_cartas():					#Busca esa carta y la tira
-					if Carta(carta2).jerarquizar() == maximo:
-						ManoCPU.tirar_carta(carta2)
+					if Carta(carta2).jerarquizar() == maximo:			#si hay mas de una, tira la que no delata el envido
+						cartas_a_tirar.append(carta2)
+				if len(cartas_a_tirar) == 1:
+					ManoCPU.tirar_carta(cartas_a_tirar[0])
+				elif len(cartas_a_tirar) >= 2:
+					for carta in cartas_a_tirar:
+						if carta[1] != palo_del_envido:
+							ManoCPU.tirar_carta(carta)
+					
+					
 		elif mano == True:
 			valor_mayor_carta = Carta(ManoCPU.mayor_carta()).jerarquizar()
 			valor_menor_carta = Carta(ManoCPU.menor_carta()).jerarquizar()
@@ -426,6 +438,7 @@ def quejugar(mano, carta_del_jugador = None):
 				ManoCPU.tirar_carta(ManoCPU.mayor_carta())
 			else: 
 				print '---> Ganaste la mano, bien jugado.'
+				pts('pJUG', truco_hecho+1)
 				raise ZeroDivisionError
 		elif mano == True:
 			if Carta(ManoCPU.mayor_carta()).jerarquizar() >= 10:
@@ -442,6 +455,7 @@ def quejugar(mano, carta_del_jugador = None):
 				ManoCPU.tirar_carta(ManoCPU.mayor_carta())				
 			else: 
 				print '---> Me voy al mazo.'
+				pts('pJUG', truco_hecho+1)
 				raise ZeroDivisionError
 		elif mano == True:
 			ManoCPU.tirar_carta(ManoCPU.mayor_carta())
@@ -495,6 +509,8 @@ def analizar_nombre(nom):
 		nom = ' Jugador   '
 	elif len(nom) >= 12:
 		nom = nom[0:8]+'...'
+	elif len(nom) == 11:
+		nom = nom
 	else:
 		espacios=11-(len(nom)+1)
 		nom = ' '+nom+' '*espacios
@@ -513,7 +529,7 @@ def truco_utilidad():
 	
 	if manos[1] == None:
 		if jugador_cartademas == True:
-			if manos[0] == True and ((Carta(cartas_tiradas_CPU[1]).jerarquizar() or (Carta(ManoCPU.decir_cartas()[0]).jerarquizar())) >= 9):
+			if manos[0] == True and ((Carta(cartas_tiradas_CPU[1]).jerarquizar() >= 9) or (Carta(ManoCPU.decir_cartas()[0]).jerarquizar() >= 9)) :
 				return True
 			elif manos[0] == False:
 				if (cartas_tiradas_CPU[1].jerarquizar() + Carta(ManoCPU.decir_cartas()[0]).jerarquizar()) >= 18:
@@ -526,7 +542,7 @@ def truco_utilidad():
 				else:
 					return False
 		elif jugador_cartademas == None or False:
-			if manos[0] == True and ((Carta(ManoCPU.decir_cartas()[0]).jerarquizar() or (Carta(ManoCPU.decir_cartas()[1]).jerarquizar())) >= 9):
+			if manos[0] == True and ((Carta(ManoCPU.decir_cartas()[0]).jerarquizar() >= 9) or (Carta(ManoCPU.decir_cartas()[1]).jerarquizar() >= 9)):
 				return True
 			elif manos[0] == False:
 				if (Carta(ManoCPU.decir_cartas()[0]).jerarquizar() + Carta(ManoCPU.decir_cartas()[0]).jerarquizar()) >= 18:
