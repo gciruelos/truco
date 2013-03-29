@@ -1,5 +1,5 @@
 ## Truco
-# Version 0.0.1
+# Version 0.1.0
 #
 #
 # Todo lo que esta dicho despues de una flecha ("--->") es porque lo dice
@@ -68,15 +68,19 @@ def primera_mano(tanto, mano):
 
 
 	if mano == False:			#Va el jugador
-		envido(False, tanto, mano) 
+		envido(False, tanto, mano)
+		truco('el')
 		cartita = Carta(carta_del_oponente())
 		envido(True, tanto, mano)
+		truco('yo')
 		quejugar(mano, cartita)
 
 	else:						#Va la pc
 		envido(True, tanto, mano)
+		truco('yo')
 		quejugar(mano)
 		envido(False, tanto, mano)
+		truco('el')
 		carta_del_oponente()
 
 	carta_1_CPU = cartas_tiradas_CPU[0]
@@ -172,7 +176,6 @@ def tercera_mano(quienva):
 	raise ZeroDivisionError
 	
 	
-
 def truco(quienlocanta, pasar = 0):
 	
 	global truco_hecho, tiene_el_quiero
@@ -257,17 +260,25 @@ def envido(soymano, tanto, mano):
 				envido_hecho = 1
 			else:
 				if cantar_envido(tanto, 100) == True:
-					env = raw_input('---> Envido\n---> Queres? (S/n) ')
+					env = raw_input('---> Envido\n---> Queres? (S/n/E) ')
 					if env in SI:
 						CualEnvido = 'Envido'
 						hablar_envido(mano)
+					elif env == 'E' or env == 'e':
+						if cantar_envido(tanto, 50) == True:
+							print '---> Quiero'
+							CualEnvido = 'EnvidoEnvido'
+							hablar_envido(mano)
+						else:
+							print '---> No quiero'
+							pts('pJUG', 3)
 					else:
 						pts('pCPU', 1)
 					envido_hecho = 1
 				#else:
 				#	print 'No cantes nada'
 		else:
-			canto_envido = raw_input('Queres cantar envido? (S/n) ')
+			canto_envido = raw_input('Queres cantar envido? (S/n/R/F) ')
 			
 			if canto_envido in SI:
 				envido_hecho = 1
@@ -285,7 +296,24 @@ def envido(soymano, tanto, mano):
 					else:
 						print '---> No quiero'
 						pts('pJUG', 1)
-						
+			elif canto_envido == 'R' or canto_envido == 'r':
+				envido_hecho = 1
+				if cantar_envido(tanto, 50) == True:
+					print '---> Quiero'
+					CualEnvido = 'RealEnvido'
+					hablar_envido(mano)
+				else:
+					print '---> No quiero'
+					pts('pJUG', 1)
+			elif canto_envido == 'F' or canto_envido == 'f':
+				envido_hecho = 1
+				if cantar_envido(tanto, 10) == True:
+					print '---> Quiero'
+					CualEnvido = 'FaltaEnvido'
+					hablar_envido(mano)
+				else:
+					print '---> No quiero'
+					pts('pJUG', 1)
 			else:
 				pass
 
@@ -526,8 +554,25 @@ def truco_utilidad():
 	global manos
 	
 	jugador_cartademas = una_carta_mas()
-	
-	if manos[1] == None:
+
+
+	if manos[0] == None:
+		if jugador_cartademas == True or jugador_cartademas == None:
+			suma_cartas = []
+			for carta in ManoCPU.decir_cartas():
+				suma_cartas.append(Carta(carta).jerarquizar())
+			suma_cartas = sum(suma_cartas)
+			if suma_cartas >= 18:
+				return True
+			else:
+				return False
+		elif jugador_cartademas == False:
+			for carta in ManoCPU.decir_cartas():
+				if Carta(cartas_tiradas_MIA[0]).jerarquizar() < Carta(carta).jerarquizar():
+					return True
+			return False
+			
+	elif manos[1] == None:
 		if jugador_cartademas == True:
 			if manos[0] == True and ((Carta(cartas_tiradas_CPU[1]).jerarquizar() >= 9) or (Carta(ManoCPU.decir_cartas()[0]).jerarquizar() >= 9)) :
 				return True
@@ -541,7 +586,7 @@ def truco_utilidad():
 					return True
 				else:
 					return False
-		elif jugador_cartademas == None or False:
+		elif jugador_cartademas == None or jugador_cartademas == False:
 			if manos[0] == True and ((Carta(ManoCPU.decir_cartas()[0]).jerarquizar() >= 9) or (Carta(ManoCPU.decir_cartas()[1]).jerarquizar() >= 9)):
 				return True
 			elif manos[0] == False:
@@ -561,7 +606,7 @@ def truco_utilidad():
 				return True
 			else:
 				return False
-		elif jugador_cartademas == None or False:
+		elif jugador_cartademas == None or jugador_cartademas == False:
 			if (Carta(ManoCPU.mayor_carta()).jerarquizar() >= 9):
 				return True
 			else:
@@ -592,6 +637,8 @@ def hablar_envido(mano):
 		puntos = 3
 	elif CualEnvido == 'EnvidoEnvido':
 		puntos = 4
+	elif CualEnvido == 'FaltaEnvido':
+		puntos = ACuanto - pCPU		#KNOWN BUG
 	
 	if mano == True:
 		if envido_CPU >= envido_JUG:

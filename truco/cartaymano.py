@@ -74,12 +74,14 @@ class Mano:
 		self.cartas = []
 		for carta in args:
 			self.cartas.append(carta)
+		#print self.cartas	#DEBUG
 		if len(self.cartas)==1:
+			print self.cartas[0]
 			self.c1 = Carta(self.cartas[0])
-		if len(self.cartas)==2:
+		elif len(self.cartas)==2:
 			self.c1 = Carta(self.cartas[0])
 			self.c2 = Carta(self.cartas[1])
-		if len(self.cartas)==3:
+		elif len(self.cartas)==3:
 			self.c1 = Carta(self.cartas[0])
 			self.c2 = Carta(self.cartas[1])
 			self.c3 = Carta(self.cartas[2])
@@ -117,7 +119,13 @@ class Mano:
 			return suma_envido(self.c3.numero, self.c1.numero)
 		else:
 			numeros = [self.c1.numero, self.c2.numero, self.c3.numero]
-			return max(numeros)
+			for a in numeros:
+				if a>=10:
+					numeros.remove(a)
+			if numeros == []:
+				return 0
+			else:
+				return max(numeros)
 	def listar_cartas(self):
 		if len(self.cartas)==1:
 			return '\n1. '+str(Carta(self.cartas[0])) 
