@@ -1,10 +1,11 @@
+# -*- encoding: utf-8 -*-
 ## Truco
-# Version 0.1.0
+# Version 0.1.1
 #
 #
 # Todo lo que esta dicho despues de una flecha ("--->") es porque lo dice
 # la computadora el resto debe ser interpretado como pies a inputs del jugador.
-#
+# 
 # Cuando se deba ingresar una carta se debe ingresar el numero que aparece
 # a la izquierda de la carta.
 #
@@ -50,13 +51,6 @@ truco_hecho = 0
 
 pJUG = 0
 pCPU = 0
-
-Palos =	['Oro', 'Espada', 'Copa', 'Basto'] 
-Numeros = [1, 2, 3, 4, 5, 6, 7, 10, 11, 12]	
-Mazo = []
-for palo in Palos:
-	for numero in Numeros:
-		Mazo.append([numero,palo])
 
 
 #################------JUEGO
@@ -128,20 +122,29 @@ def segunda_mano(quienva):
 	if Carta(carta_2_MIA).jerarquizar() > Carta(carta_2_CPU).jerarquizar():
 		manos[1] = 0
 		if manos[0] == 0 or manos[0] ==  2:
-			print '---> Perdi la mano.'
+			print '---> Perdí la mano.'
 			pts('pJUG', truco_hecho+1)
 			raise ZeroDivisionError
 		tercera_mano('jugador')
 	elif Carta(carta_2_MIA).jerarquizar() < Carta(carta_2_CPU).jerarquizar():
 		manos[1] = 1
 		if manos[0] == 1 or manos[0] ==  2:
-			print '---> Gane la mano.'
+			print '---> Gané la mano.'
 			pts('pCPU', truco_hecho+1)
 			raise ZeroDivisionError
 		tercera_mano('cpu')
 	elif Carta(carta_2_MIA).jerarquizar() == Carta(carta_2_CPU).jerarquizar():
-		manos[1] = 2
-		tercera_mano('parda')
+		if manos[0] == 0:
+			print '---> Perdí la mano.'
+			pts('pJUG', truco_hecho+1)
+			raise ZeroDivisionError
+		elif manos [0] == 1:
+			print '---> Gané la mano.'
+			pts('pCPU', truco_hecho+1)
+			raise ZeroDivisionError
+		else:
+			manos[1] = 2
+			tercera_mano('parda')
 	
 
 def tercera_mano(quienva):
@@ -168,10 +171,10 @@ def tercera_mano(quienva):
 	carta_3_MIA = cartas_tiradas_MIA[2]
 	
 	if Carta(carta_3_CPU).jerarquizar() > Carta(carta_3_MIA).jerarquizar():
-		print '---> Gane la mano.'
+		print '---> Gané la mano.'
 		pts('pCPU', truco_hecho+1)
 	else:
-		print '---> Perdi la mano.'
+		print '---> Perdí la mano.'
 		pts('pJUG', truco_hecho+1)
 	raise ZeroDivisionError
 	
@@ -186,11 +189,11 @@ def truco(quienlocanta, pasar = 0):
 	if quienlocanta == 'el' and tiene_el_quiero is not True:
 		if pasar == 0:
 			if truco_hecho == 0:
-				cantar = raw_input('Queres cantar truco? (S/n) ' )
+				cantar = raw_input('Querés cantar truco? (S/n) ' )
 			elif truco_hecho == 1:
-				cantar = raw_input('Queres cantar retruco? (S/n) ' )
+				cantar = raw_input('Querés cantar retruco? (S/n) ' )
 			elif truco_hecho == 2:
-				cantar = raw_input('Queres cantar vale cuatro? (S/n) ' )
+				cantar = raw_input('Querés cantar vale cuatro? (S/n) ' )
 			else:
 				pass
 		else:
@@ -209,11 +212,11 @@ def truco(quienlocanta, pasar = 0):
 	elif quienlocanta == 'cpu' and tiene_el_quiero is not False:
 		if truco_utilidad()==True:
 			if truco_hecho == 0:
-				cantar = raw_input('---> Truco\n---> Queres? (S/n/R) ')
+				cantar = raw_input('---> Truco\n---> Querés? (S/n/R) ')
 			elif truco_hecho == 1:
-				cantar = raw_input('---> Re truco\n---> Queres? (S/n/R) ')
+				cantar = raw_input('---> Re truco\n---> Querés? (S/n/R) ')
 			elif truco_hecho == 2:
-				cantar = raw_input('---> Vale cuatro\n---> Queres? (S/n/R) ')
+				cantar = raw_input('---> Vale cuatro\n---> Querés? (S/n/R) ')
 			else:
 				pass
 			if cantar in SI:
@@ -251,7 +254,7 @@ def envido(soymano, tanto, mano):
 		
 		if soymano == True:
 			if cantar_envido(tanto, tanto) == True:
-				env = raw_input('---> Real envido\n---> Queres? (S/n) ')
+				env = raw_input('---> Real envido\n---> Querés? (S/n) ')
 				if env in SI:
 					CualEnvido = 'RealEnvido'
 					hablar_envido(mano)
@@ -260,7 +263,7 @@ def envido(soymano, tanto, mano):
 				envido_hecho = 1
 			else:
 				if cantar_envido(tanto, 100) == True:
-					env = raw_input('---> Envido\n---> Queres? (S/n/E) ')
+					env = raw_input('---> Envido\n---> Querés? (S/n/E) ')
 					if env in SI:
 						CualEnvido = 'Envido'
 						hablar_envido(mano)
@@ -278,12 +281,12 @@ def envido(soymano, tanto, mano):
 				#else:
 				#	print 'No cantes nada'
 		else:
-			canto_envido = raw_input('Queres cantar envido? (S/n/R/F) ')
+			canto_envido = raw_input('Querés cantar envido? (S/n/R/F) ')
 			
 			if canto_envido in SI:
 				envido_hecho = 1
 				if cantar_envido(tanto, tanto) == True:
-					env = raw_input('---> Envido\n---> Queres? (S/n) ')
+					env = raw_input('---> Envido\n---> Querés? (S/n) ')
 					if env in SI:
 						CualEnvido = 'EnvidoEnvido'
 						hablar_envido(mano)
@@ -337,10 +340,10 @@ def carta_del_oponente():
 				otro = cartas_tiradas_CPU[1]
 			else:
 				otro = cartas_tiradas_CPU[2]
-			cartadeljugador = raw_input('Que carta queres tirar? (El tiro un '+str(Carta(otro))+') ')
+			cartadeljugador = raw_input('Qué carta querés tirar? (El tiro un '+str(Carta(otro))+') ')
 			
 		else:
-			cartadeljugador = raw_input('Que carta queres tirar? ')
+			cartadeljugador = raw_input('Qué carta querés tirar? ')
 		
 
 		if cartadeljugador == 'Mazo':
@@ -349,11 +352,11 @@ def carta_del_oponente():
 		try:
 			ndeorden = int(cartadeljugador)
 		except:
-			print 'Ingresa un numero valido'
+			print 'Ingresá un numero válido'
 			continue
 			
 		if ndeorden > ManoMIA.contar_cartas() or ndeorden <= 0:
-			print 'Ingresa un numero valido'
+			print 'Ingresá un numero válido'
 			continue
 
 		
@@ -642,17 +645,17 @@ def hablar_envido(mano):
 	
 	if mano == True:
 		if envido_CPU >= envido_JUG:
-			print '---> Tengo '+str(envido_CPU)+' y vos decis \"son buenas\". Gane.'
+			print '---> Tengo '+str(envido_CPU)+' y vos decis \"son buenas\". Gané.'
 			pts('pCPU', puntos)
 		else:
-			print '---> Tengo '+str(envido_CPU)+' y vos '+str(envido_JUG)+'. Perdi.'
+			print '---> Tengo '+str(envido_CPU)+' y vos '+str(envido_JUG)+'. Perdí.'
 			pts('pJUG', puntos)
 	elif mano == False:
 		if envido_CPU >= envido_JUG:
-			print '---> Tenes '+str(envido_JUG)+' y las mias son mejores: '+str(envido_CPU)+'. Gane.'
+			print '---> Tenes '+str(envido_JUG)+' y las mias son mejores: '+str(envido_CPU)+'. Gané.'
 			pts('pCPU', puntos)
 		else:
-			print '---> Tenes '+str(envido_JUG)+' y digo \"son buenas\". Perdi.'
+			print '---> Tenes '+str(envido_JUG)+' y digo \"son buenas\". Perdí.'
 			pts('pJUG', puntos)
 
 
@@ -692,38 +695,53 @@ def ingresar_mano():
 	primera_mano(envido_CPU, Mano_Quien)
 
 
-try:
-	ACuanto = int(raw_input('A cuanto queres jugar? (15/30) '))
-except:
-	print 'Por defecto se juega a 15'
-	ACuanto = 15
+if __name__ == '__main__':
+	Palos =	['Oro', 'Espada', 'Copa', 'Basto'] 
+	Numeros = [1, 2, 3, 4, 5, 6, 7, 10, 11, 12]	
+	Mazo = []
+	for palo in Palos:
+		for numero in Numeros:
+			Mazo.append([numero,palo])
 
-	
-Nombre_Jugador = str(raw_input('Como es tu nombre? '))
-print '\n\n'
-
-
-while (pJUG < ACuanto) and (pCPU < ACuanto):
 	try:
-		ingresar_mano()
-	except EOFError:
-		print '\n\nQue lastima.\n'
-		exit()
-	except ZeroDivisionError:
-		#Cambia quien es mano
-		Mano_Quien = not Mano_Quien
-		#Vuelven a ser 0 todos los contadores
-		Limpiar().limpiarvariables()
-		envido_hecho = 0
-		truco_hecho = 0
-		tiene_el_quiero = None
-		manos = [None, None, None]
+		ACuanto = raw_input('A cuánto querés jugar? (15/30) ')
+		if ACuanto[0] == 'd':
+			ACuanto = int(ACuanto[1:])
+		else:
+			ACuanto = int(ACuanto)
+			if ACuanto != 15 or ACuanto != 30:
+				print 'Número no válido. Por defecto se juega a 15'
+				ACuanto = 15
+
+	except:
+		print 'Por defecto se juega a 15'
+		ACuanto = 15
 		
-		decir_puntos()
+	Nombre_Jugador = str(raw_input('Cómo es tu nombre? '))
+	print '\n\n'
 
 
-if pJUG>=ACuanto:
-	print '\n\n\n----GANASTE----\n'
-else:
-	print '\n\n\n----PERDISTE----\n'
+	while (pJUG < ACuanto) and (pCPU < ACuanto):
+		try:
+			ingresar_mano()
+		except EOFError:
+			print '\n\nQué lastima.\n'
+			exit()
+		except ZeroDivisionError:
+			#Cambia quien es mano
+			Mano_Quien = not Mano_Quien
+			#Vuelven a ser 0 todos los contadores
+			Limpiar().limpiarvariables()
+			envido_hecho = 0
+			truco_hecho = 0
+			tiene_el_quiero = None
+			manos = [None, None, None]
+			
+			decir_puntos()
+
+
+	if pJUG>=ACuanto:
+		print '\n\n\n----GANASTE----\n'
+	else:
+		print '\n\n\n----PERDISTE----\n'
 

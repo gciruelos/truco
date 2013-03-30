@@ -1,3 +1,6 @@
+# -*- encoding: utf-8 -*-
+#
+# Version 0.1.1
 #
 # Clases Carta y Mano con los metodos en los que esta basado casi todo 
 # el programa
