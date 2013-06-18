@@ -121,14 +121,14 @@ def segunda_mano(quienva):
 	
 	if Carta(carta_2_MIA).jerarquizar() > Carta(carta_2_CPU).jerarquizar():
 		manos[1] = 0
-		if manos[0] == 0 or manos[0] ==  2:
+		if manos[0] == 0 or manos[0] ==	 2:
 			print '---> Perdí la mano.'
 			pts('pJUG', truco_hecho+1)
 			raise ZeroDivisionError
 		tercera_mano('jugador')
 	elif Carta(carta_2_MIA).jerarquizar() < Carta(carta_2_CPU).jerarquizar():
 		manos[1] = 1
-		if manos[0] == 1 or manos[0] ==  2:
+		if manos[0] == 1 or manos[0] ==	 2:
 			print '---> Gané la mano.'
 			pts('pCPU', truco_hecho+1)
 			raise ZeroDivisionError
@@ -526,18 +526,18 @@ def decir_puntos():
 	nombre = analizar_nombre(Nombre_Jugador)
 
 	print '\n'
-	print '|   CPU   |'+nombre+'|'
+	print '|   CPU	 |'+nombre+'|'
 	print '|---------------------|'
-	print '|         |           |'
-	print '|      '+c+' |        '+j+' |'
-	print '|         |           |'
+	print '|		 |			 |'
+	print '|	  '+c+' |		 '+j+' |'
+	print '|		 |			 |'
 	print '\n'
 	
 	
 def analizar_nombre(nom):
 	#Tiene que tener 11 caracteres
 	if nom == '':
-		nom = ' Jugador   '
+		nom = ' Jugador	  '
 	elif len(nom) >= 12:
 		nom = nom[0:8]+'...'
 	elif len(nom) == 11:
@@ -703,19 +703,13 @@ if __name__ == '__main__':
 		for numero in Numeros:
 			Mazo.append([numero,palo])
 
+	ACuanto = raw_input('A cuánto querés jugar? (15/30) ')
 	try:
-		ACuanto = raw_input('A cuánto querés jugar? (15/30) ')
-		if ACuanto[0] == 'd':
-			ACuanto = int(ACuanto[1:])
-		else:
-			ACuanto = int(ACuanto)
-			if ACuanto != 15 or ACuanto != 30:
-				print 'Número no válido. Por defecto se juega a 15'
-				ACuanto = 15
-
-	except:
-		print 'Por defecto se juega a 15'
+		ACuanto = int(ACuanto)
+	except ValueError:
+		print "Número no válido. Se usa el valor por defecto."
 		ACuanto = 15
+	print "Jugamos a {0}".format(ACuanto)
 		
 	Nombre_Jugador = str(raw_input('Cómo es tu nombre? '))
 	print '\n\n'
