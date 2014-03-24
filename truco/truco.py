@@ -16,7 +16,7 @@
 # ingrese "Mazo" sin comillas.
 #
 # 
-# Author: Gonzalo Ciruelos <comp.gonzalo@gmail.com>
+# Author: Gonzalo Ciruelos <gonzalo.ciruelos@gmail.com>
 # License: GPLv3
 
 

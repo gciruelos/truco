@@ -5,7 +5,7 @@
 # Clases Carta y Mano con los metodos en los que esta basado casi todo 
 # el programa
 #
-# Author: Gonzalo Ciruelos <comp.gonzalo@gmail.com>
+# Author: Gonzalo Ciruelos <gonzalo.ciruelos@gmail.com>
 # License: GPLv3
 
 
