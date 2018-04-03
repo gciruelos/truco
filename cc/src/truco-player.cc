@@ -2,25 +2,27 @@
 
 
 
-size_t TrucoPlayer::SayTanto() {
+size_t DumbTrucoPlayer::SayTanto() {
   return 20;
 }
 
-EnvidoResponse TrucoPlayer::CantarEnvido(GameState state) {
+EnvidoResponse DumbTrucoPlayer::CantarEnvido(const GameState& state) {
   return NO_QUIERO_E;
 }
 
-EnvidoResponse TrucoPlayer::AnswerEnvido(
-    GameState state, std::vector<EnvidoResponse> responses) {
+EnvidoResponse DumbTrucoPlayer::AnswerEnvido(
+    const GameState& state,
+    const std::vector<EnvidoResponse>& responses) {
   return NO_QUIERO_E;
 }
 
-TrucoLevel TrucoPlayer::CantarTruco(GameState state, TrucoLevel current_truco) {
+TrucoLevel DumbTrucoPlayer::CantarTruco(
+    const GameState& state, TrucoLevel current_truco) {
   return NADA;
 }
 
-QuererResponse TrucoPlayer::AnswerTruco(
-    GameState state, TrucoLevel new_truco) {
+QuererResponse DumbTrucoPlayer::AnswerTruco(
+    const GameState& state, TrucoLevel new_truco) {
   return NO_QUIERO;
 }
 
